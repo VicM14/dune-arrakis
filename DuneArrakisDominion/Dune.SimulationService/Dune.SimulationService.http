@@ -1,0 +1,6 @@
+@Dune.SimulationService_HostAddress = http://localhost:5229
+
+GET {{Dune.SimulationService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
