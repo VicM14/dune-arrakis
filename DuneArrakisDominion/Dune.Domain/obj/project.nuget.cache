@@ -1,12 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3X5zQuZKGOs=",
+  "dgSpecHash": "Fqf569oE+qY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.26\\microsoft.windowsdesktop.app.ref.8.0.26.nupkg.sha512",
-    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.26\\microsoft.netcore.app.ref.8.0.26.nupkg.sha512",
-    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.26\\microsoft.aspnetcore.app.ref.8.0.26.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
