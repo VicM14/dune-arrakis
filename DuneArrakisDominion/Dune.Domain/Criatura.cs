@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dune.Domain;
 
+
 public class Criatura
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
