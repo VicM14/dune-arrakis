@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dune.Domain;
+﻿namespace Dune.Domain;
 
 public enum TipoCriatura
 {
     GUSANO_DE_ARENA,
     TIGRE_LAZA,
-    MUAD_DIB
+    MUAD_DIB,
+    HALCON_DEL_DESIERTO,
+    TRUCHA_DE_ARENA
 }
 
 public enum TipoActividad
@@ -28,15 +24,13 @@ public enum NivelAdquisitivo
 
 public enum Alimentacion
 {
-    CARNIVORO,
-    HERBIVORO,
-    OMNIVORO
+    RECOLECTOR,
+    DEPREDADOR
 }
 
 public enum Medio
 {
-    TERRESTRE,
-    ACUATICO,
+    DESIERTO,
     AEREO,
     SUBTERRANEO
 }

@@ -10,10 +10,10 @@ public class MuadDib : Criatura
 {
     public MuadDib()
     {
-        EdadAdulta = 5;
-        ApetitoBase = 5;
-        Dieta = Alimentacion.HERBIVORO;
-        Habitat = Medio.TERRESTRE;
+        EdadAdulta = 12;
+        ApetitoBase = 2;
+        Dieta = Alimentacion.RECOLECTOR;
+        Habitat = Medio.DESIERTO;
     }
 
     public override double CalcularIngestaRequerida(TipoActividad actividad)

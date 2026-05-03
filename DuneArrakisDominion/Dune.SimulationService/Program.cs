@@ -15,12 +15,14 @@ var app = builder.Build();
 app.UseCors("AllowUnity");
 static Criatura CrearCriaturaAleatoria(Random rng)
 {
-    int tipo = rng.Next(0, 3); // 0 = Gusano, 1 = TigraLaza, 2 = MuadDib
+    int tipo = rng.Next(0, 5);
     return tipo switch
     {
-        0 => new GusanoDeArena { Nombre = "Gusano Joven" },
-        1 => new TigraLaza { Nombre = "Tigra Laza Joven" },
-        _ => new MuadDib { Nombre = "Muad'Dib Joven" }
+        0 => new GusanoDeArena { Nombre = "Gusano de Arena Joven" },
+        1 => new TigraLaza { Nombre = "Tigre Laza Joven" },
+        2 => new MuadDib { Nombre = "Muad'Dib Joven" },
+        3 => new HalconDelDesierto { Nombre = "Halcón del Desierto Joven" },
+        _ => new TruchaDeArena { Nombre = "Trucha de Arena Joven" }
     };
 }
 
@@ -210,7 +212,7 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
         // Calcular coste de traslado
         double sigma = criatura.Habitat switch
         {
-            Medio.TERRESTRE => 5,
+            Medio.DESIERTO => 5,
             Medio.AEREO => 15,
             Medio.SUBTERRANEO => 25,
             _ => 5
