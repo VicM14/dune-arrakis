@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Dune.Domain;
 
-public class TigraLaza : Criatura
+public class GusanoDeArena : Criatura
 {
-    public TigraLaza()
+    public GusanoDeArena()
     {
-        EdadAdulta = 38;
-        ApetitoBase = 8;
+        EdadAdulta = 24;
+        ApetitoBase = 5;
         Dieta = Alimentacion.DEPREDADOR;
-        Habitat = Medio.DESIERTO;
+        Habitat = Medio.SUBTERRANEO;
     }
 
     public override double CalcularIngestaRequerida(TipoActividad actividad)

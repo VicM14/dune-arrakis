@@ -13,6 +13,8 @@ public abstract class Criatura
     public Alimentacion Dieta { get; set; }
     public Medio Habitat { get; set; }
     public bool EnLetargo { get; set; } = false;
+    public int VecesFavorita { get; set; } = 0; // contador que pide el enunciado
+
     public abstract double CalcularIngestaRequerida(TipoActividad actividad);
 
     public void Alimentar(double cantidad, TipoActividad actividad)
@@ -30,25 +32,5 @@ public abstract class Criatura
             Salud = 0;
             EnLetargo = true;
         }
-    }
-}
-
-// Ejemplo de clase específica: Gusano de Arena
-public class GusanoDeArena : Criatura
-{
-    public GusanoDeArena()
-    {
-        EdadAdulta = 50;
-        ApetitoBase = 100;
-        Dieta = Alimentacion.CARNIVORO;
-        Habitat = Medio.TERRESTRE;
-    }
-
-    public override double CalcularIngestaRequerida(TipoActividad actividad)
-    {
-        // Fórmula exponencial del PDF: ApetitoBase * 2^(Edad-EdadAdulta)
-        if (EdadActual < EdadAdulta) return ApetitoBase * EdadActual;
-        int alfa = (actividad == TipoActividad.EXHIBICION) ? 1 : 15;
-        return ApetitoBase * Math.Pow(2, (EdadActual - EdadAdulta)) * alfa;
     }
 }
