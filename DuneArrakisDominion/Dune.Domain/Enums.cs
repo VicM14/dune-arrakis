@@ -37,5 +37,6 @@ public enum Medio
 {
     TERRESTRE,
     ACUATICO,
-    AEREO
+    AEREO,
+    SUBTERRANEO
 }

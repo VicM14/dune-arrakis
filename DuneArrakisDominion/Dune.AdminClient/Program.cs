@@ -110,7 +110,7 @@ async Task VerEstado(HttpClient client)
         foreach (var i in e.Instalaciones)
         {
             Console.WriteLine($"  - Instalación: {i.Nombre} ({i.Tipo})");
-            foreach (var c in i.Criaturas)
+            foreach (var c in i.Criaturas.OrderByDescending(c => c.Salud))
                 Console.WriteLine($"    * Criatura: {c.Nombre} | Salud: {c.Salud}% | Edad: {c.EdadActual}");
         }
     }
