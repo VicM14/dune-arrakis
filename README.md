@@ -22,3 +22,20 @@ El sistema sigue una arquitectura de **Microservicios desacoplados** comunicados
 *   **Frontend:** Unity 2022.3+
 *   **Persistencia:** System.Text.Json
 *   **Control de Versiones:** Git / GitHub
+
+Se ha implementado un sistema mínimamente ejecutable que cumple con los requisitos de creación, almacenamiento y recuperación de información:
+
+### Componentes Funcionales:
+*   **Dune.AdminClient:** Cliente de consola capaz de generar una partida inicial y enviar la orden de guardado al ecosistema distribuido.
+*   **Dune.SimulationService:** Actúa como orquestador, recibiendo las peticiones del cliente y delegando la responsabilidad de almacenamiento al servicio especializado.
+*   **Dune.PersistenceService:** Módulo de persistencia que gestiona la serialización y escritura de datos en formato **JSON** (`partida_arrakis.json`).
+
+### Mecanismo de Comunicación:
+*   Se ha establecido un flujo de comunicación **Service-to-Service** utilizando `HttpClient` y el protocolo HTTP.
+*   La arquitectura permite el desacoplamiento total: el cliente no sabe dónde ni cómo se guardan los datos, solo conoce el endpoint de simulación.
+
+### Cómo probar la funcionalidad:
+1. Iniciar la solución con múltiples proyectos de inicio (`SimulationService` y `PersistenceService`).
+2. Ejecutar el `AdminClient`.
+3. Verificar la creación del archivo `partida_arrakis.json` en la carpeta del servicio de persistencia.
+
