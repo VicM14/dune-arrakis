@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Dune.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d102595693f1dc5d2af59236449ee164938a383")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e9a0b1d9216caa30c0b46ce75059b8be917596d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Dune.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Dune.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -10,16 +10,28 @@ public class Enclave
     public int PoblacionVisitantes { get; set; } = 100;
     public List<Instalacion> Instalaciones { get; set; } = new();
 
-    // Algoritmo de Visitantes (Sección 3.3)
+    public int Hectareas { get; set; } = 100; // valor por defecto razonable
+    public int VisitantesMensualesBase { get; set; } // visitantesMesEnclave del enunciado
+
+
     public void ActualizarVisitantes()
     {
-        // V_actual = V_anterior * (1 + 0.1 * Nivel) - (V_anterior * 0.05)
-        // Simplificado: Crecimiento basado en nivel menos abandono del 5%
-        double crecimiento = 0.1 * Nivel;
-        double abandono = 0.05;
+        int hectareasInst = Instalaciones.Sum(i => i.Hectareas);
+        if (Hectareas == 0) return;
 
-        PoblacionVisitantes = (int)(PoblacionVisitantes * (1 + crecimiento - abandono));
+        // Calcular salud media de todas las criaturas
+        var todasCriaturas = Instalaciones.SelectMany(i => i.Criaturas).ToList();
+        double saludMedia = todasCriaturas.Count > 0
+            ? todasCriaturas.Average(c => c.Salud) : 100;
 
+        double llegan = (VisitantesMensualesBase * (double)hectareasInst / Hectareas)
+                        * (saludMedia / 100.0);
+
+        double abandonan = PoblacionVisitantes
+                         - (PoblacionVisitantes * (double)hectareasInst / Hectareas)
+                         * (saludMedia / 100.0);
+
+        PoblacionVisitantes = (int)(PoblacionVisitantes + llegan - abandonan);
         if (PoblacionVisitantes < 0) PoblacionVisitantes = 0;
     }
 }

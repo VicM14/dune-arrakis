@@ -9,5 +9,6 @@ public class Partida
     public double StockAgua { get; set; } = 1000;
     public List<Enclave> Enclaves { get; set; } = new();
     public List<string> RegistroEventos { get; set; } = new();
+    public Escenario? Escenario { get; set; }
 }
 

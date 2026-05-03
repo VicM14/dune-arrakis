@@ -12,7 +12,7 @@ public abstract class Criatura
     public double ApetitoBase { get; set; }
     public Alimentacion Dieta { get; set; }
     public Medio Habitat { get; set; }
-
+    public bool EnLetargo { get; set; } = false;
     public abstract double CalcularIngestaRequerida(TipoActividad actividad);
 
     public void Alimentar(double cantidad, TipoActividad actividad)
@@ -25,7 +25,11 @@ public abstract class Criatura
         else if (ratio < 1.0) Salud -= 10;
         else Salud = Math.Min(100, Salud + 5);
 
-        if (Salud < 0) Salud = 0;
+        if (Salud <= 0)
+        {
+            Salud = 0;
+            EnLetargo = true;
+        }
     }
 }
 

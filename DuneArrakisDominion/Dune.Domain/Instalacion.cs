@@ -10,24 +10,41 @@ public class Instalacion
     public int CapacidadMaxima { get; set; } = 5;
     public List<Criatura> Criaturas { get; set; } = new();
     public List<Visitante> VisitantesActuales { get; set; } = new();
+    public int Hectareas { get; set; }
+    public int CosteConstruccion { get; set; }
+    public double CalcularCosteMantenimiento()
+    {
+        // Convención razonable: 1% del coste de construcción por mes
+        return CosteConstruccion * 0.01;
+    }
 
-    public double CalcularDonacionesTotales(int nivelEnclave)
+    public double CalcularDonacionesTotales()
     {
         double total = 0;
         foreach (var v in VisitantesActuales)
         {
-            foreach (var c in Criaturas)
+            // La fórmula solo aplica a la criatura "favorita" — elegida por el visitante
+            // Por simplificación: cada visitante elige la criatura con más salud
+            var favorita = Criaturas.Where(c => c.Salud > 0)
+                                    .OrderByDescending(c => c.Salud)
+                                    .FirstOrDefault();
+            if (favorita == null) continue;
+
+            double sigma = v.Nivel switch
             {
-                if (c.Salud > 0)
-                {
-                    // Fórmula: (Salud/100) * (Edad * 10) * NivelEnclave * FactorVisitante
-                    double factorV = (v.Nivel == NivelAdquisitivo.ALTO) ? 2.0 : 1.0;
-                    total += (c.Salud / 100.0) * (c.EdadActual * 10) * nivelEnclave * factorV;
-                }
-            }
+                NivelAdquisitivo.BAJO => 1,
+                NivelAdquisitivo.MEDIO => 15,
+                NivelAdquisitivo.ALTO => 30,
+                _ => 1
+            };
+            double donacion = 10 * (favorita.Salud / 100.0)
+                                 * ((double)favorita.EdadActual / favorita.EdadAdulta)
+                                 * sigma;
+            total += donacion;
         }
         return total;
     }
 }
+
 
 
