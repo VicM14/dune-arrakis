@@ -1,16 +1,39 @@
 {
-  "NombreJugador": "Vic",
-  "MesActual": 9,
-  "Solaris": 100000,
-  "Enclaves": [],
+  "NombreJugador": "Paul Atreides",
+  "MesActual": 3,
+  "Solaris": 99410,
+  "Enclaves": [
+    {
+      "Id": "ab5b74c4-eaa2-4fc0-9c12-b2013bd84cf0",
+      "Nombre": "Arrakeen",
+      "Nivel": 2,
+      "PoblacionVisitantes": 197,
+      "Instalaciones": [
+        {
+          "Id": "f46aa9f1-a082-45e2-b49a-edd60db04043",
+          "Nombre": "Gran Pabell\u00F3n de Shai-Hulud",
+          "Tipo": 1,
+          "Criaturas": [
+            {
+              "Id": "0260a4d8-2389-48ad-b331-7ab153184830",
+              "Nombre": "Peque\u00F1o Hacedor",
+              "Tipo": 0,
+              "Salud": 100,
+              "EdadActual": 7,
+              "EdadAdulta": 10,
+              "ApetitoBase": 20,
+              "ContadorVecesFavorita": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "RegistroEventos": [
+    "Partida sembrada con \u00E9xito.",
     "--- Mes 2 ---",
+    "Balance Mes: \u002B100,00 | -400,00",
     "--- Mes 3 ---",
-    "--- Mes 4 ---",
-    "--- Mes 5 ---",
-    "--- Mes 6 ---",
-    "--- Mes 7 ---",
-    "--- Mes 8 ---",
-    "--- Mes 9 ---"
+    "Balance Mes: \u002B120,00 | -410,00"
   ]
 }

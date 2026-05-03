@@ -1,6 +1,10 @@
 {
-  "NombreJugador": "Paul Atreides",
-  "MesActual": 1,
-  "Solaris": 50000,
-  "Enclaves": []
+  "NombreJugador": "Vic",
+  "MesActual": 2,
+  "Solaris": 100000,
+  "Enclaves": [],
+  "RegistroEventos": [
+    "--- Mes 2 ---",
+    "Balance Mes: \u002B0,00 | -0,00"
+  ]
 }
