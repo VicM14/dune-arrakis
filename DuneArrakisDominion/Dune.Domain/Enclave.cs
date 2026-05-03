@@ -15,6 +15,7 @@ public class Enclave
     public NivelAdquisitivo NivelAdquisitivo { get; set; } = NivelAdquisitivo.MEDIO;
     public double Suministros { get; set; } = 0;
     public TipoActividad TipoEnclave { get; set; } // CRIANZA o EXHIBICION
+
     public void ActualizarVisitantes()
     {
         int hectareasInst = Instalaciones.Sum(i => i.Hectareas);
