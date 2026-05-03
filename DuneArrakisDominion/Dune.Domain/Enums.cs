@@ -4,11 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dune.Domain
-{
+namespace Dune.Domain;
 
-    public enum Medio { DESIERTO, AEREO, SUBTERRANEO }
-    public enum Alimentacion { RECOLECTOR, DEPREDADOR }
-    public enum NivelAdquisitivo { BAJO, MEDIO, ALTO }
-    public enum TipoActividad { ACLIMATACION, EXHIBICION }
+public enum TipoCriatura
+{
+    GUSANO_DE_ARENA,
+    TIGRE_LAZA,
+    MUAD_DIB
+}
+
+public enum TipoActividad
+{
+    CRIANZA,
+    EXHIBICION
+}
+
+public enum NivelAdquisitivo
+{
+    BAJO,
+    MEDIO,
+    ALTO
+}
+
+public enum Alimentacion
+{
+    CARNIVORO,
+    HERBIVORO,
+    OMNIVORO
+}
+
+public enum Medio
+{
+    TERRESTRE,
+    ACUATICO,
+    AEREO
 }

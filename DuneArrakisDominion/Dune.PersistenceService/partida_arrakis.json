@@ -1,6 +1,16 @@
 {
-  "NombreJugador": "Paul Atreides",
-  "MesActual": 1,
-  "Solaris": 50000,
-  "Enclaves": []
+  "NombreJugador": "Vic",
+  "MesActual": 9,
+  "Solaris": 100000,
+  "Enclaves": [],
+  "RegistroEventos": [
+    "--- Mes 2 ---",
+    "--- Mes 3 ---",
+    "--- Mes 4 ---",
+    "--- Mes 5 ---",
+    "--- Mes 6 ---",
+    "--- Mes 7 ---",
+    "--- Mes 8 ---",
+    "--- Mes 9 ---"
+  ]
 }
