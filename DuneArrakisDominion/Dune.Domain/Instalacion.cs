@@ -1,35 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Dune.Domain
-{
+namespace Dune.Domain;
+
 public class Instalacion
 {
-    public string Codigo { get; set; } = string.Empty;
-    public double CosteConstruccion { get; set; }
-    public Medio MedioCompatible { get; set; }
-    public Alimentacion AlimentacionCompatible { get; set; }
-    public int CapacidadMaxima { get; set; }
-    public double Hectareas { get; set; }
-    public List<Criatura> Criaturas { get; set; } = new();
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Nombre { get; set; } = string.Empty;
     public TipoActividad Tipo { get; set; }
+    public int CapacidadMaxima { get; set; } = 5;
+    public List<Criatura> Criaturas { get; set; } = new();
+    public List<Visitante> VisitantesActuales { get; set; } = new();
 
-    // Fórmula de Donación (Sección 3.4)
-    public double CalcularDonacion(Criatura c, NivelAdquisitivo nivel)
+    public double CalcularDonacionesTotales(int nivelEnclave)
     {
-        int sigma = nivel switch
+        double total = 0;
+        foreach (var v in VisitantesActuales)
         {
-            NivelAdquisitivo.BAJO => 1,
-            NivelAdquisitivo.MEDIO => 15,
-            NivelAdquisitivo.ALTO => 30,
-            _ => 1
-        };
-
-        return 10 * (c.Salud / 100.0) * ((double)c.EdadActual / c.EdadAdulta) * sigma;
+            foreach (var c in Criaturas)
+            {
+                if (c.Salud > 0)
+                {
+                    // Fórmula: (Salud/100) * (Edad * 10) * NivelEnclave * FactorVisitante
+                    double factorV = (v.Nivel == NivelAdquisitivo.ALTO) ? 2.0 : 1.0;
+                    total += (c.Salud / 100.0) * (c.EdadActual * 10) * nivelEnclave * factorV;
+                }
+            }
+        }
+        return total;
     }
 }
-}
+
 
