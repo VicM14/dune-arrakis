@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dune.Domain;
-
 
 public class Criatura
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string Nombre { get; set; } = string.Empty;
-    public Medio Medio { get; set; }
-    public Alimentacion Alimentacion { get; set; }
-    public int EdadActual { get; set; }
-    public int EdadAdulta { get; set; }
+    public TipoCriatura Tipo { get; set; }
     public double Salud { get; set; } = 100;
-    public int VecesFavorita { get; set; }
-    public int ApetitoBase { get; set; }
+    public int EdadActual { get; set; } = 0;
+    public int EdadAdulta { get; set; }
+    public double ApetitoBase { get; set; }
+    public int ContadorVecesFavorita { get; set; } = 0;
+
+    // Constructor vacío para serialización JSON
+    public Criatura() { }
 
     // Fórmula de Ingesta Requerida (Sección 3.5)
     public double CalcularIngestaRequerida(TipoActividad actividad)
@@ -49,6 +46,4 @@ public class Criatura
 
         if (Salud < 0) Salud = 0;
     }
-
-    public bool EstaEnLetargo => Salud <= 0;
 }
