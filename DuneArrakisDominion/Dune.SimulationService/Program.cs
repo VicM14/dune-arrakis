@@ -241,5 +241,131 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
     }
     finally { _simLock.Release(); }
 });
+app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string nombreEscenario, IHttpClientFactory clientFactory) =>
+{
+    await _simLock.WaitAsync();
+    try
+    {
+        // Seleccionar escenario
+        Escenario escenario = nombreEscenario switch
+        {
+            "Arrakeen" => Escenario.Arrakeen(),
+            "GiediPrime" => Escenario.GiediPrime(),
+            "Caladan" => Escenario.Caladan(),
+            _ => Escenario.Arrakeen()
+        };
 
+        // Enclave de aclimatación — común a todos los escenarios (Sección 3.2)
+        var enclaveAclimatacion = new Enclave
+        {
+            Nombre = "Cuenca Experimental de Arrakis",
+            Hectareas = 5000,
+            Suministros = 20000,
+            TipoEnclave = TipoActividad.CRIANZA,
+            VisitantesMensualesBase = 0
+        };
+
+        // Enclave de exhibición según escenario
+        var enclaveExhibicion = nombreEscenario switch
+        {
+            "Arrakeen" => new Enclave
+            {
+                Nombre = "Arrakeen",
+                Hectareas = 7700,
+                Suministros = 10000,
+                TipoEnclave = TipoActividad.EXHIBICION,
+                NivelAdquisitivo = NivelAdquisitivo.ALTO,
+                VisitantesMensualesBase = 1000,
+                PoblacionVisitantes = 1000
+            },
+            "GiediPrime" => new Enclave
+            {
+                Nombre = "Giedi Prime",
+                Hectareas = 100,
+                Suministros = 5000,
+                TipoEnclave = TipoActividad.EXHIBICION,
+                NivelAdquisitivo = NivelAdquisitivo.BAJO,
+                VisitantesMensualesBase = 2000,
+                PoblacionVisitantes = 2000
+            },
+            _ => new Enclave
+            {
+                Nombre = "Caladan",
+                Hectareas = 10000,
+                Suministros = 25000,
+                TipoEnclave = TipoActividad.EXHIBICION,
+                NivelAdquisitivo = NivelAdquisitivo.MEDIO,
+                VisitantesMensualesBase = 3000,
+                PoblacionVisitantes = 3000
+            }
+        };
+
+        partidaActual = new Partida
+        {
+            NombreJugador = nombreJugador,
+            Solaris = escenario.SolarisIniciales,
+            StockAgua = 1000,
+            StockEspecia = 500,
+            Escenario = escenario,
+            Enclaves = new List<Enclave> { enclaveAclimatacion, enclaveExhibicion }
+        };
+
+        partidaActual.RegistroEventos.Add(
+            $"Partida iniciada. Escenario: {escenario.Nombre}. Jugador: {nombreJugador}.");
+
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(partidaActual);
+    }
+    finally { _simLock.Release(); }
+});
+app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion, string enclaveId, IHttpClientFactory clientFactory) =>
+{
+    await _simLock.WaitAsync();
+    try
+    {
+        var enclave = partidaActual.Enclaves.FirstOrDefault(e => e.Id == enclaveId);
+        if (enclave == null)
+            return Results.NotFound("Enclave no encontrado.");
+
+        // Tabla completa de instalaciones (Sección 3.4 del PDF)
+        Instalacion? nueva = codigoInstalacion switch
+        {
+            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5 },
+            "ADP03" => new Instalacion { Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3 },
+            "AAV02" => new Instalacion { Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2 },
+            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4 },
+            "EDR02" => new Instalacion { Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2 },
+            "EDP03" => new Instalacion { Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3 },
+            "EAV02" => new Instalacion { Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2 },
+            "ESU03" => new Instalacion { Nombre = "Pozo Reforzado (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3 },
+            _ => null
+        };
+
+        if (nueva == null)
+            return Results.BadRequest($"Código de instalación desconocido: {codigoInstalacion}");
+
+        if (partidaActual.Solaris < nueva.CosteConstruccion)
+            return Results.BadRequest(
+                $"Solaris insuficientes. Coste: {nueva.CosteConstruccion}, disponibles: {partidaActual.Solaris}");
+
+        // Validar que haya hectáreas libres en el enclave
+        int hectareasUsadas = enclave.Instalaciones.Sum(i => i.Hectareas);
+        if (hectareasUsadas + nueva.Hectareas > enclave.Hectareas)
+            return Results.BadRequest(
+                $"Espacio insuficiente en {enclave.Nombre}. Libres: {enclave.Hectareas - hectareasUsadas} ha, necesarias: {nueva.Hectareas} ha.");
+
+        partidaActual.Solaris -= nueva.CosteConstruccion;
+        enclave.Instalaciones.Add(nueva);
+        partidaActual.RegistroEventos.Add(
+            $"Construida {nueva.Nombre} en {enclave.Nombre}. Coste: {nueva.CosteConstruccion} Solaris.");
+
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(partidaActual);
+    }
+    finally { _simLock.Release(); }
+});
 app.Run();
