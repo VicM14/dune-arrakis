@@ -3,16 +3,19 @@ using System.Net.Http.Json;
 using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
-{
     options.AddPolicy("AllowUnity",
-        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
+        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
 app.UseCors("AllowUnity");
+
+// ----- ESTADO Y CONCURRENCIA -----
+SemaphoreSlim _simLock = new SemaphoreSlim(1, 1);
+var partidaActual = new Partida();
+
+// ----- HELPER -----
 static Criatura CrearCriaturaAleatoria(Random rng)
 {
     int tipo = rng.Next(0, 5);
@@ -25,10 +28,6 @@ static Criatura CrearCriaturaAleatoria(Random rng)
         _ => new TruchaDeArena { Nombre = "Trucha de Arena Joven" }
     };
 }
-
-// ----- ESTADO Y CONCURRENCIA -----
-SemaphoreSlim _simLock = new SemaphoreSlim(1, 1);
-var partidaActual = new Partida();
 
 // ----- ENDPOINTS -----
 
@@ -47,7 +46,6 @@ app.MapPost("/simulacion/guardar-actual", async (Partida nuevaPartida, IHttpClie
     finally { _simLock.Release(); }
 });
 
-// LÓGICA DE RONDA AVANZADA (Entrega Final)
 app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
@@ -62,28 +60,28 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
 
         foreach (var enclave in partidaActual.Enclaves)
         {
-            // 1. Actualizar Población de Visitantes (Algoritmo 3.3)
+            // 1. Actualizar población de visitantes (Sección 3.3)
             enclave.ActualizarVisitantes();
 
             foreach (var inst in enclave.Instalaciones)
             {
-                // 2. Generar Visitantes Reales para este mes (Niveles Adquisitivos)
+                // 2. Generar visitantes reales para este mes
                 inst.VisitantesActuales.Clear();
-                int numVisitantes = Math.Min(enclave.PoblacionVisitantes / 10, 50); // Capacidad simulada
+                int numVisitantes = Math.Min(enclave.PoblacionVisitantes / 10, 50);
                 for (int i = 0; i < numVisitantes; i++)
                 {
                     var nivel = (NivelAdquisitivo)rng.Next(0, 3);
                     inst.VisitantesActuales.Add(new Visitante(nivel));
                 }
 
-                // 3. Costes de Mantenimiento (Sección 3.6)
+                // 3. Costes de mantenimiento (Sección 3.4)
                 gastosTotales += inst.CalcularCosteMantenimiento();
 
-                foreach (var criatura in inst.Criaturas)
+                // 4. Alimentación de criaturas — .ToList() para evitar excepción si se modifica la lista
+                foreach (var criatura in inst.Criaturas.ToList())
                 {
                     if (criatura.Salud > 0)
                     {
-                        // 4. Consumo de Recursos (Agua y Especia)
                         double requerida = criatura.CalcularIngestaRequerida(inst.Tipo);
                         double costeAgua = requerida * 0.2;
                         double costeEspecia = requerida * 0.1;
@@ -98,27 +96,12 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                         {
                             // Penalización por falta de recursos (Sección 3.5)
                             criatura.Alimentar(0, inst.Tipo);
-                            partidaActual.RegistroEventos.Add($"¡ALERTA! Falta de recursos para {criatura.Nombre}");
-                        }
-
-                        // 5. Donaciones (Sección 3.4 con factor de visitante)
-                        if (inst.Tipo == TipoActividad.EXHIBICION)
-                        {
-                            double donacion = inst.CalcularDonacionesTotales();
-                            ingresosTotales += donacion;
-                        }
-                        // Reproducción/clonación (Sección 3.4 — 20% de probabilidad mensual)
-                        if (inst.Tipo == TipoActividad.CRIANZA &&
-                            inst.Criaturas.Count < inst.CapacidadMaxima &&
-                            rng.NextDouble() < 0.20)
-                        {
-                            var nuevaCriatura = CrearCriaturaAleatoria(rng);
-                            inst.Criaturas.Add(nuevaCriatura);
                             partidaActual.RegistroEventos.Add(
-                                $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                                $"ALERTA: Falta de recursos para {criatura.Nombre}");
                         }
 
                         criatura.EdadActual++;
+
                         // Descarte de criaturas en letargo (Sección 3.6 — coste fijo 20.000 solaris)
                         if (criatura.EnLetargo)
                         {
@@ -129,16 +112,39 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                         }
                     }
                 }
-                // Retirar criaturas en letargo de la instalación
+
+                // 5. Retirar criaturas en letargo ANTES de calcular donaciones y reproducción
                 inst.Criaturas.RemoveAll(c => c.EnLetargo);
+
+                // 6. Donaciones — UNA sola vez por instalación, fuera del foreach de criaturas (Sección 3.4)
+                if (inst.Tipo == TipoActividad.EXHIBICION)
+                {
+                    double donacion = inst.CalcularDonacionesTotales();
+                    ingresosTotales += donacion;
+                    if (donacion > 0)
+                        partidaActual.RegistroEventos.Add(
+                            $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris");
+                }
+
+                // 7. Reproducción/clonación — UNA sola vez por instalación, fuera del foreach de criaturas (Sección 3.4 — 20%)
+                if (inst.Tipo == TipoActividad.CRIANZA &&
+                    inst.Criaturas.Count < inst.CapacidadMaxima &&
+                    rng.NextDouble() < 0.20)
+                {
+                    var nuevaCriatura = CrearCriaturaAleatoria(rng);
+                    inst.Criaturas.Add(nuevaCriatura);
+                    partidaActual.RegistroEventos.Add(
+                        $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                }
             }
         }
 
-        // 6. Balance Económico Final
+        // 8. Balance económico final
         partidaActual.Solaris += (ingresosTotales - gastosTotales);
-        partidaActual.RegistroEventos.Add($"Finanzas: +{ingresosTotales:F2} Solaris | -{gastosTotales:F2} Gastos");
+        partidaActual.RegistroEventos.Add(
+            $"Finanzas mes {partidaActual.MesActual}: +{ingresosTotales:F2} ingresos | -{gastosTotales:F2} gastos");
 
-        // 7. Persistencia Automática
+        // 9. Persistencia automática
         var client = clientFactory.CreateClient();
         await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
 
@@ -147,7 +153,6 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
     finally { _simLock.Release(); }
 });
 
-// Endpoint para comprar suministros (Necesario para la UI de Unity)
 app.MapPost("/simulacion/comprar-recursos", async (double agua, double especia, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
@@ -161,7 +166,6 @@ app.MapPost("/simulacion/comprar-recursos", async (double agua, double especia, 
         foreach (var enclave in partidaActual.Enclaves)
         {
             int capacidadMaxima = enclave.Hectareas * 3;
-            // StockActual aproximado por enclave (puedes refinar si cada enclave tiene su propio stock)
             if ((partidaActual.StockAgua + agua + partidaActual.StockEspecia + especia) > capacidadMaxima)
                 return Results.BadRequest(
                     $"Capacidad máxima del almacén superada en {enclave.Nombre}. Máximo: {capacidadMaxima} unidades.");
@@ -175,12 +179,12 @@ app.MapPost("/simulacion/comprar-recursos", async (double agua, double especia, 
     }
     finally { _simLock.Release(); }
 });
+
 app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string instalacionOrigenId, string instalacionDestinoId, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
     try
     {
-        // Buscar instalación origen y destino en todos los enclaves
         Instalacion? origen = null;
         Instalacion? destino = null;
 
@@ -209,7 +213,7 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
         if (destino.Criaturas.Count >= destino.CapacidadMaxima)
             return Results.BadRequest("La instalación de destino está completa.");
 
-        // Calcular coste de traslado
+        // Calcular coste de traslado (Sección 3.6)
         double sigma = criatura.Habitat switch
         {
             Medio.DESIERTO => 5,
@@ -220,7 +224,8 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
         double costeTraslado = 100 * Math.Pow(3, criatura.EdadActual - criatura.EdadAdulta) * sigma;
 
         if (partidaActual.Solaris < costeTraslado)
-            return Results.BadRequest($"Solaris insuficientes. Coste: {costeTraslado:F2}, disponibles: {partidaActual.Solaris:F2}.");
+            return Results.BadRequest(
+                $"Solaris insuficientes. Coste: {costeTraslado:F2}, disponibles: {partidaActual.Solaris:F2}.");
 
         // Ejecutar traslado
         partidaActual.Solaris -= costeTraslado;
@@ -229,7 +234,6 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
         partidaActual.RegistroEventos.Add(
             $"Traslado: {criatura.Nombre} de {origen.Nombre} a {destino.Nombre}. Coste: {costeTraslado:F2} Solaris.");
 
-        // Persistir
         var client = clientFactory.CreateClient();
         await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
 
