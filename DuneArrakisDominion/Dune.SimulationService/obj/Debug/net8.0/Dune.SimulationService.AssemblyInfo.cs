@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Dune.SimulationService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82aeda9a5b193e43e5cafcee10c0812cb802c0fd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9551678f3d739989f175b7ed37f531e3644a0c57")]
 [assembly: System.Reflection.AssemblyProductAttribute("Dune.SimulationService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Dune.SimulationService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
