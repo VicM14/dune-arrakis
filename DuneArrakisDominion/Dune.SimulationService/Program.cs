@@ -368,5 +368,4 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
     }
     finally { _simLock.Release(); }
 });
-app.Run("http://localhost:5000");
 app.Run();

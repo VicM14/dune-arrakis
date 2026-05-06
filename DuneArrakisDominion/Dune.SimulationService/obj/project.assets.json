@@ -27,23 +27,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\": {},
+    "C:\\Users\\victo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\Dune.SimulationService.csproj",
+      "projectUniqueName": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\Dune.SimulationService.csproj",
       "projectName": "Dune.SimulationService",
-      "projectPath": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\Dune.SimulationService.csproj",
-      "packagesPath": "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\obj\\",
+      "projectPath": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\Dune.SimulationService.csproj",
+      "packagesPath": "C:\\Users\\victo\\.nuget\\packages\\",
+      "outputPath": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.SimulationService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\victoria.madriznieve\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\victo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -58,8 +58,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj": {
-              "projectPath": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj"
+            "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj": {
+              "projectPath": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.Domain\\Dune.Domain.csproj"
             }
           }
         }
@@ -90,24 +90,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.26, 8.0.26]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.26, 8.0.26]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.26, 8.0.26]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.26, 8.0.26]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -116,7 +98,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

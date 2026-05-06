@@ -6,11 +6,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bi
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.runtimeconfig.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.pdb
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Microsoft.OpenApi.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.Domain.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.Domain.pdb
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.csproj.AssemblyReference.cache
@@ -18,7 +13,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\ob
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.AssemblyInfoInputs.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.AssemblyInfo.cs
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.csproj.CoreCompileInputs.cache
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.MvcApplicationPartsAssemblyInfo.cs
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.MvcApplicationPartsAssemblyInfo.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.sourcelink.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\scopedcss\bundle\Dune.PersistenceService.styles.css
@@ -26,7 +20,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\ob
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.development.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.Per.C87A15C9.Up2Date
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\refint\Dune.PersistenceService.dll

@@ -3,7 +3,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.AssemblyInfoInputs.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.AssemblyInfo.cs
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.csproj.CoreCompileInputs.cache
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.MvcApplicationPartsAssemblyInfo.cs
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.MvcApplicationPartsAssemblyInfo.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.sourcelink.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\appsettings.Development.json
@@ -14,11 +13,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Dune.SimulationService.runtimeconfig.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Dune.SimulationService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Dune.SimulationService.pdb
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Microsoft.OpenApi.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Dune.Domain.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\Dune.Domain.pdb
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\scopedcss\bundle\Dune.SimulationService.styles.css
@@ -26,7 +20,6 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\staticwebassets.development.json
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.Sim.54BB99EE.Up2Date
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\refint\Dune.SimulationService.dll
