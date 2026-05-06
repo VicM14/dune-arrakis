@@ -34,34 +34,40 @@ while (!salir)
 
 async Task SembrarDatos(HttpClient client)
 {
-    var nuevaPartida = new Partida
-    {
-        NombreJugador = "Paul Atreides",
-        Solaris = 100000,
-        StockAgua = 1000,
-        StockEspecia = 500,
-        Enclaves = new List<Enclave>
-        {
-            new Enclave
-            {
-                Nombre = "Arrakeen",
-                Nivel = 3,
-                PoblacionVisitantes = 200,
-                Instalaciones = new List<Instalacion>
-                {
-                    new Instalacion
-                    {
-                        Nombre = "Santuario de Shai-Hulud",
-                        Tipo = TipoActividad.EXHIBICION,
-                        Criaturas = new List<Criatura> { new GusanoDeArena { Nombre = "Hacedor Joven", EdadActual = 10 } }
-                    }
-                }
-            }
-        }
-    };
+    Console.WriteLine("Escenarios disponibles: Arrakeen, GiediPrime, Caladan");
+    Console.Write("Selecciona escenario: ");
+    string escenario = Console.ReadLine()?.Trim() ?? "Arrakeen";
 
-    var response = await client.PostAsJsonAsync($"{SimUrl}/simulacion/guardar-actual", nuevaPartida);
-    if (response.IsSuccessStatusCode) Console.WriteLine(">> Arrakis ha sido colonizada con éxito.");
+    try
+    {
+        Console.WriteLine(">> Conectando con el servidor...");
+        string nombreCodificado = Uri.EscapeDataString("Paul Atreides");
+        string escenarioCodificado = Uri.EscapeDataString(escenario);
+
+        var response = await client.PostAsync(
+            $"{SimUrl}/simulacion/iniciar-partida?nombreJugador={nombreCodificado}&nombreEscenario={escenarioCodificado}",
+            null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($">> Partida iniciada en escenario {escenario}.");
+            Console.WriteLine(">> Usa la opción 4 para ver el estado actual.");
+        }
+        else
+        {
+            string error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($">> Error del servidor ({(int)response.StatusCode}): {error}");
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        Console.WriteLine($">> No se pudo conectar con el SimulationService: {ex.Message}");
+        Console.WriteLine(">> Asegúrate de que Dune.SimulationService está corriendo en el puerto 5000.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($">> Error inesperado: {ex.Message}");
+    }
 }
 
 async Task EjecutarRonda(HttpClient client)
@@ -105,7 +111,7 @@ async Task VerEstado(HttpClient client)
     Console.WriteLine($"Solaris: {p?.Solaris:F2} | Agua: {p?.StockAgua:F1} | Especia: {p?.StockEspecia:F1}");
     foreach (var e in p?.Enclaves ?? new())
     {
-        Console.WriteLine($"\nEnclave: {e.Nombre} (Nivel {e.Nivel})");
+        Console.WriteLine($"Enclave: {e.Nombre} ({e.TipoEnclave}) - Nivel adquisitivo: {e.NivelAdquisitivo}");
         Console.WriteLine($"  Visitantes: {e.PoblacionVisitantes}");
         foreach (var i in e.Instalaciones)
         {
