@@ -10,3 +10,15 @@ C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\refint\Dune.Domain.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.pdb
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\ref\Dune.Domain.dll
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\bin\Debug\net8.0\Dune.Domain.deps.json
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\bin\Debug\net8.0\Dune.Domain.dll
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\bin\Debug\net8.0\Dune.Domain.pdb
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.AssemblyInfoInputs.cache
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.AssemblyInfo.cs
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.csproj.CoreCompileInputs.cache
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.sourcelink.json
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.dll
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\refint\Dune.Domain.dll
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\Dune.Domain.pdb
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.Domain\obj\Debug\net8.0\ref\Dune.Domain.dll

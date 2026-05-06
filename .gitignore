@@ -50,9 +50,7 @@ ExportedObj/
 /ProjectSettings/ProjectVersion.txt
 /UserSettings/
 .DS_Store
-*.csproj
 *.unityproj
-*.sln
 *.suo
 *.tmp
 *.user
