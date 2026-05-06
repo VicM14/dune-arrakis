@@ -1,39 +1,43 @@
 {
   "NombreJugador": "Paul Atreides",
-  "MesActual": 3,
-  "Solaris": 99410,
+  "MesActual": 2,
+  "Solaris": 99980,
+  "StockEspecia": 501,
+  "StockAgua": 1005,
   "Enclaves": [
     {
-      "Id": "ab5b74c4-eaa2-4fc0-9c12-b2013bd84cf0",
+      "Id": "6ea28c27-9e92-400c-b02f-5b050b950984",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "0d689e55-1118-4166-9d1e-b203445ef485",
       "Nombre": "Arrakeen",
-      "Nivel": 2,
-      "PoblacionVisitantes": 197,
-      "Instalaciones": [
-        {
-          "Id": "f46aa9f1-a082-45e2-b49a-edd60db04043",
-          "Nombre": "Gran Pabell\u00F3n de Shai-Hulud",
-          "Tipo": 1,
-          "Criaturas": [
-            {
-              "Id": "0260a4d8-2389-48ad-b331-7ab153184830",
-              "Nombre": "Peque\u00F1o Hacedor",
-              "Tipo": 0,
-              "Salud": 100,
-              "EdadActual": 7,
-              "EdadAdulta": 10,
-              "ApetitoBase": 20,
-              "ContadorVecesFavorita": 0
-            }
-          ]
-        }
-      ]
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
     }
   ],
   "RegistroEventos": [
-    "Partida sembrada con \u00E9xito.",
-    "--- Mes 2 ---",
-    "Balance Mes: \u002B100,00 | -400,00",
-    "--- Mes 3 ---",
-    "Balance Mes: \u002B120,00 | -410,00"
-  ]
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Paul Atreides.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos | -0,00 gastos"
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  }
 }
