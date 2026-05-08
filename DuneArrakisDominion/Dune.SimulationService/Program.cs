@@ -430,6 +430,48 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
     finally { _simLock.Release(); }
 });
 
+// Descarte voluntario de una criatura (Sección 3.6 del PDF: coste fijo 20.000
+// solaris). Se aplica a criaturas vivas que el jugador decide eliminar de
+// forma manual (el descarte automático por letargo ya ocurre en la ronda).
+app.MapPost("/simulacion/descartar-criatura", async (string criaturaId, IHttpClientFactory clientFactory) =>
+{
+    await _simLock.WaitAsync();
+    try
+    {
+        const int COSTE_DESCARTE = 20000;
+
+        // Buscar la criatura en cualquier instalación del juego.
+        Instalacion? contenedora = null;
+        Criatura? criatura = null;
+        foreach (var enclave in partidaActual.Enclaves)
+        {
+            foreach (var inst in enclave.Instalaciones)
+            {
+                var c = inst.Criaturas.FirstOrDefault(x => x.Id == criaturaId);
+                if (c != null) { contenedora = inst; criatura = c; break; }
+            }
+            if (criatura != null) break;
+        }
+
+        if (criatura == null || contenedora == null)
+            return Results.NotFound("Criatura no encontrada.");
+
+        if (partidaActual.Solaris < COSTE_DESCARTE)
+            return Results.BadRequest($"Solaris insuficientes para descarte. Requeridos: {COSTE_DESCARTE}.");
+
+        partidaActual.Solaris -= COSTE_DESCARTE;
+        contenedora.Criaturas.Remove(criatura);
+        partidaActual.RegistroEventos.Add(
+            $"DESCARTE VOLUNTARIO: {criatura.Nombre} transferida a Bene Tleilax. Coste: {COSTE_DESCARTE} Solaris.");
+
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(new { mensaje = "Criatura descartada.", solarisRestantes = partidaActual.Solaris });
+    }
+    finally { _simLock.Release(); }
+});
+
 app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion, string enclaveId, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();

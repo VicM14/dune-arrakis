@@ -18,6 +18,8 @@ while (!salir)
     Console.WriteLine("[4] Mover Suministros a una Instalación");
     Console.WriteLine("[5] Construir Instalación");
     Console.WriteLine("[6] Ver Estado Detallado");
+    Console.WriteLine("[7] Trasladar Criatura (aclimatación → exhibición)");
+    Console.WriteLine("[8] Descartar Criatura (Bene Tleilax, 20.000 solaris)");
     Console.WriteLine("[S] Salir");
     Console.WriteLine("========================================");
     Console.Write("Selecciona una opción: ");
@@ -32,6 +34,8 @@ while (!salir)
         case "4": await MoverSuministros(client); break;
         case "5": await ConstruirInstalacion(client); break;
         case "6": await VerEstado(client); break;
+        case "7": await TrasladarCriatura(client); break;
+        case "8": await DescartarCriatura(client); break;
         case "S": salir = true; break;
     }
 }
@@ -233,4 +237,114 @@ async Task VerEstado(HttpClient client)
                 Console.WriteLine($"      - {c.Nombre} | Salud: {c.Salud:F0} | Edad: {c.EdadActual}/{c.EdadAdulta}");
         }
     }
+}
+
+async Task TrasladarCriatura(HttpClient client)
+{
+    var partida = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
+    if (partida == null || partida.Enclaves.Count == 0)
+    {
+        Console.WriteLine(">> No hay partida activa.");
+        return;
+    }
+
+    // Listar criaturas vivas en instalaciones de aclimatación.
+    var candidatas = new List<(Criatura c, Instalacion origen, Enclave e)>();
+    foreach (var e in partida.Enclaves)
+        foreach (var i in e.Instalaciones.Where(x => x.Tipo == TipoActividad.ACLIMATACION))
+            foreach (var c in i.Criaturas.Where(x => x.Salud > 0))
+                candidatas.Add((c, i, e));
+
+    if (candidatas.Count == 0)
+    {
+        Console.WriteLine(">> No hay criaturas en aclimatación.");
+        return;
+    }
+
+    Console.WriteLine("Criaturas en aclimatación:");
+    for (int idx = 0; idx < candidatas.Count; idx++)
+    {
+        var (c, i, e) = candidatas[idx];
+        string adulta = c.EdadActual >= c.EdadAdulta ? "ADULTA" : "joven";
+        Console.WriteLine($"  [{idx + 1}] {c.Nombre} ({adulta}) | salud {c.Salud:F0} edad {c.EdadActual}/{c.EdadAdulta} | en {i.Nombre} ({e.Nombre})");
+    }
+    Console.Write("Criatura (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int cIdx) || cIdx < 1 || cIdx > candidatas.Count) return;
+    var (criatura, origen, _) = candidatas[cIdx - 1];
+
+    // Listar instalaciones de exhibición compatibles.
+    var destinos = partida.Enclaves
+        .SelectMany(e => e.Instalaciones)
+        .Where(i => i.Tipo == TipoActividad.EXHIBICION)
+        .ToList();
+
+    if (destinos.Count == 0)
+    {
+        Console.WriteLine(">> No hay instalaciones de exhibición construidas.");
+        return;
+    }
+
+    Console.WriteLine("Instalaciones de exhibición:");
+    for (int idx = 0; idx < destinos.Count; idx++)
+    {
+        var d = destinos[idx];
+        bool compat = d.Medio == criatura.Habitat && d.Alimentacion == criatura.Dieta;
+        string flag = compat ? "compatible" : "incompatible";
+        Console.WriteLine($"  [{idx + 1}] {d.Nombre} | {d.Medio}/{d.Alimentacion} | {d.Criaturas.Count}/{d.CapacidadMaxima} | {flag}");
+    }
+    Console.Write("Destino (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int dIdx) || dIdx < 1 || dIdx > destinos.Count) return;
+    var destino = destinos[dIdx - 1];
+
+    var response = await client.PostAsync(
+        $"{SimUrl}/simulacion/trasladar-criatura?criaturaId={Uri.EscapeDataString(criatura.Id)}&instalacionOrigenId={Uri.EscapeDataString(origen.Id)}&instalacionDestinoId={Uri.EscapeDataString(destino.Id)}",
+        null);
+
+    if (response.IsSuccessStatusCode)
+        Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
+    else
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+}
+
+async Task DescartarCriatura(HttpClient client)
+{
+    var partida = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
+    if (partida == null || partida.Enclaves.Count == 0)
+    {
+        Console.WriteLine(">> No hay partida activa.");
+        return;
+    }
+
+    var todas = new List<(Criatura c, Instalacion i, Enclave e)>();
+    foreach (var e in partida.Enclaves)
+        foreach (var i in e.Instalaciones)
+            foreach (var c in i.Criaturas)
+                todas.Add((c, i, e));
+
+    if (todas.Count == 0)
+    {
+        Console.WriteLine(">> No hay criaturas para descartar.");
+        return;
+    }
+
+    Console.WriteLine("Criaturas (descartar cuesta 20.000 solaris):");
+    for (int idx = 0; idx < todas.Count; idx++)
+    {
+        var (c, i, e) = todas[idx];
+        Console.WriteLine($"  [{idx + 1}] {c.Nombre} | salud {c.Salud:F0} | en {i.Nombre} ({e.Nombre})");
+    }
+    Console.Write("Criatura (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int cIdx) || cIdx < 1 || cIdx > todas.Count) return;
+    var seleccion = todas[cIdx - 1];
+
+    Console.Write($"¿Confirmar descarte de {seleccion.c.Nombre}? (S/N): ");
+    if (Console.ReadLine()?.Trim().ToUpper() != "S") { Console.WriteLine(">> Cancelado."); return; }
+
+    var response = await client.PostAsync(
+        $"{SimUrl}/simulacion/descartar-criatura?criaturaId={Uri.EscapeDataString(seleccion.c.Id)}", null);
+
+    if (response.IsSuccessStatusCode)
+        Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
+    else
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
 }
