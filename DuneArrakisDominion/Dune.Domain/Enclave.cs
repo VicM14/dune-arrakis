@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-
 namespace Dune.Domain;
 
 public class Enclave
@@ -10,18 +8,30 @@ public class Enclave
     public int PoblacionVisitantes { get; set; } = 100;
     public List<Instalacion> Instalaciones { get; set; } = new();
 
-    public int Hectareas { get; set; } = 100; // valor por defecto razonable
-    public int VisitantesMensualesBase { get; set; } // visitantesMesEnclave del enunciado
+    public int Hectareas { get; set; } = 100;
+    public int VisitantesMensualesBase { get; set; }
     public NivelAdquisitivo NivelAdquisitivo { get; set; } = NivelAdquisitivo.MEDIO;
-    public double Suministros { get; set; } = 0;
-    public TipoActividad TipoEnclave { get; set; } // CRIANZA o EXHIBICION
+
+    /// <summary>
+    /// Suministros disponibles en el almacén general del enclave.
+    /// Capacidad máxima = 3 × Hectareas (Sección 3.3 del PDF).
+    /// Cada unidad tiene un coste fijo de 5 solaris al comprarla.
+    /// </summary>
+    public int Suministros { get; set; } = 0;
+
+    public TipoActividad TipoEnclave { get; set; }
+
+    /// <summary>Capacidad máxima del almacén general (Sección 3.3: triple de las hectáreas).</summary>
+    public int CapacidadAlmacen => Hectareas * 3;
+
+    /// <summary>Espacio libre en el almacén general.</summary>
+    public int EspacioLibreEnAlmacen => Math.Max(0, CapacidadAlmacen - Suministros);
 
     public void ActualizarVisitantes()
     {
         int hectareasInst = Instalaciones.Sum(i => i.Hectareas);
         if (Hectareas == 0) return;
 
-        // Calcular salud media de todas las criaturas
         var todasCriaturas = Instalaciones.SelectMany(i => i.Criaturas).ToList();
         double saludMedia = todasCriaturas.Count > 0
             ? todasCriaturas.Average(c => c.Salud) : 100;

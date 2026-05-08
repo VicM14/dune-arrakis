@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using Dune.Domain;
@@ -12,10 +12,12 @@ bool salir = false;
 while (!salir)
 {
     Console.WriteLine("\n========================================");
-    Console.WriteLine("[1] Sembrar Datos (Arrakeen + Gusano)");
-    Console.WriteLine("[2] EJECUTAR RONDA MENSUAL");
-    Console.WriteLine("[3] Comprar Recursos (Agua/Especia)");
-    Console.WriteLine("[4] Ver Estado Detallado");
+    Console.WriteLine("[1] Iniciar Partida (escenario + Cuenca Experimental)");
+    Console.WriteLine("[2] Ejecutar Ronda Mensual");
+    Console.WriteLine("[3] Comprar Suministros (5 Solaris/unidad)");
+    Console.WriteLine("[4] Mover Suministros a una Instalación");
+    Console.WriteLine("[5] Construir Instalación");
+    Console.WriteLine("[6] Ver Estado Detallado");
     Console.WriteLine("[S] Salir");
     Console.WriteLine("========================================");
     Console.Write("Selecciona una opción: ");
@@ -24,23 +26,24 @@ while (!salir)
 
     switch (opcion)
     {
-        case "1": await SembrarDatos(client); break;
+        case "1": await IniciarPartida(client); break;
         case "2": await EjecutarRonda(client); break;
-        case "3": await ComprarRecursos(client); break;
-        case "4": await VerEstado(client); break;
+        case "3": await ComprarSuministros(client); break;
+        case "4": await MoverSuministros(client); break;
+        case "5": await ConstruirInstalacion(client); break;
+        case "6": await VerEstado(client); break;
         case "S": salir = true; break;
     }
 }
 
-async Task SembrarDatos(HttpClient client)
+async Task IniciarPartida(HttpClient client)
 {
-    Console.WriteLine("Escenarios disponibles: Arrakeen, GiediPrime, Caladan");
+    Console.WriteLine("Escenarios: Arrakeen / GiediPrime / Caladan");
     Console.Write("Selecciona escenario: ");
     string escenario = Console.ReadLine()?.Trim() ?? "Arrakeen";
 
     try
     {
-        Console.WriteLine(">> Conectando con el servidor...");
         string nombreCodificado = Uri.EscapeDataString("Paul Atreides");
         string escenarioCodificado = Uri.EscapeDataString(escenario);
 
@@ -51,7 +54,7 @@ async Task SembrarDatos(HttpClient client)
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine($">> Partida iniciada en escenario {escenario}.");
-            Console.WriteLine(">> Usa la opción 4 para ver el estado actual.");
+            Console.WriteLine(">> Usa la opción 6 para ver el estado actual.");
         }
         else
         {
@@ -64,10 +67,6 @@ async Task SembrarDatos(HttpClient client)
         Console.WriteLine($">> No se pudo conectar con el SimulationService: {ex.Message}");
         Console.WriteLine(">> Asegúrate de que Dune.SimulationService está corriendo en el puerto 5000.");
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($">> Error inesperado: {ex.Message}");
-    }
 }
 
 async Task EjecutarRonda(HttpClient client)
@@ -79,45 +78,159 @@ async Task EjecutarRonda(HttpClient client)
     {
         var p = await response.Content.ReadFromJsonAsync<Partida>();
         Console.WriteLine($"\n--- INFORME MES {p?.MesActual} ---");
-        Console.WriteLine($"Solaris: {p?.Solaris:F2} | Agua: {p?.StockAgua:F1} | Especia: {p?.StockEspecia:F1}");
-        // Mostrar los últimos 2 eventos (Balance y posibles alertas)
-        if (p?.RegistroEventos.Count >= 2)
+        Console.WriteLine($"Solaris: {p?.Solaris:F2}");
+        if (p?.RegistroEventos.Count > 0)
         {
-            Console.WriteLine($">> {p.RegistroEventos[^2]}");
-            Console.WriteLine($">> {p.RegistroEventos[^1]}");
+            int n = Math.Min(5, p.RegistroEventos.Count);
+            for (int i = p.RegistroEventos.Count - n; i < p.RegistroEventos.Count; i++)
+                Console.WriteLine($"  >> {p.RegistroEventos[i]}");
         }
+    }
+    else
+    {
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
     }
 }
 
-async Task ComprarRecursos(HttpClient client)
+async Task ComprarSuministros(HttpClient client)
 {
-    Console.Write("Cantidad de AGUA a comprar (Coste: 2 Solaris/ud): ");
-    double agua = double.Parse(Console.ReadLine() ?? "0");
-    Console.Write("Cantidad de ESPECIA a comprar (Coste: 10 Solaris/ud): ");
-    double especia = double.Parse(Console.ReadLine() ?? "0");
+    var partida = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
+    if (partida == null || partida.Enclaves.Count == 0)
+    {
+        Console.WriteLine(">> No hay partida activa. Usa la opción 1 primero.");
+        return;
+    }
 
-    var response = await client.PostAsJsonAsync($"{SimUrl}/simulacion/comprar-recursos?agua={agua}&especia={especia}", new { });
+    Console.WriteLine("Enclaves disponibles:");
+    for (int i = 0; i < partida.Enclaves.Count; i++)
+    {
+        var e = partida.Enclaves[i];
+        Console.WriteLine($"  [{i + 1}] {e.Nombre} — almacén {e.Suministros}/{e.Hectareas * 3}");
+    }
+
+    Console.Write("Selecciona enclave (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int idx) || idx < 1 || idx > partida.Enclaves.Count)
+    {
+        Console.WriteLine(">> Selección inválida.");
+        return;
+    }
+    string enclaveId = partida.Enclaves[idx - 1].Id;
+
+    Console.Write("Cantidad de suministros a comprar (5 Solaris/unidad): ");
+    if (!int.TryParse(Console.ReadLine(), out int cantidad) || cantidad <= 0)
+    {
+        Console.WriteLine(">> Cantidad inválida.");
+        return;
+    }
+
+    var response = await client.PostAsync(
+        $"{SimUrl}/simulacion/comprar-suministros?enclaveId={Uri.EscapeDataString(enclaveId)}&cantidad={cantidad}", null);
 
     if (response.IsSuccessStatusCode)
-        Console.WriteLine(">> Suministros adquiridos y enviados a los almacenes.");
+        Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
     else
-        Console.WriteLine(">> Error: Fondos insuficientes en el Imperio.");
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+}
+
+async Task MoverSuministros(HttpClient client)
+{
+    var partida = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
+    if (partida == null || partida.Enclaves.Count == 0)
+    {
+        Console.WriteLine(">> No hay partida activa.");
+        return;
+    }
+
+    Console.WriteLine("Enclaves disponibles:");
+    for (int i = 0; i < partida.Enclaves.Count; i++)
+    {
+        var e = partida.Enclaves[i];
+        Console.WriteLine($"  [{i + 1}] {e.Nombre} — almacén: {e.Suministros}, instalaciones: {e.Instalaciones.Count}");
+    }
+    Console.Write("Enclave (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int eIdx) || eIdx < 1 || eIdx > partida.Enclaves.Count) return;
+    var enclave = partida.Enclaves[eIdx - 1];
+
+    if (enclave.Instalaciones.Count == 0)
+    {
+        Console.WriteLine(">> Este enclave no tiene instalaciones todavía.");
+        return;
+    }
+
+    Console.WriteLine("Instalaciones del enclave:");
+    for (int i = 0; i < enclave.Instalaciones.Count; i++)
+    {
+        var ins = enclave.Instalaciones[i];
+        Console.WriteLine($"  [{i + 1}] {ins.Nombre} — stock interno: {ins.Suministros}/{ins.CosteConstruccion}");
+    }
+    Console.Write("Instalación destino (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int iIdx) || iIdx < 1 || iIdx > enclave.Instalaciones.Count) return;
+    var inst = enclave.Instalaciones[iIdx - 1];
+
+    Console.Write("Cantidad a mover: ");
+    if (!int.TryParse(Console.ReadLine(), out int cantidad) || cantidad <= 0) return;
+
+    var response = await client.PostAsync(
+        $"{SimUrl}/simulacion/mover-suministros?enclaveId={Uri.EscapeDataString(enclave.Id)}&instalacionId={Uri.EscapeDataString(inst.Id)}&cantidad={cantidad}", null);
+
+    if (response.IsSuccessStatusCode)
+        Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
+    else
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+}
+
+async Task ConstruirInstalacion(HttpClient client)
+{
+    var partida = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
+    if (partida == null || partida.Enclaves.Count == 0)
+    {
+        Console.WriteLine(">> No hay partida activa.");
+        return;
+    }
+
+    Console.WriteLine("Códigos disponibles:");
+    Console.WriteLine("  ACLIMATACIÓN: ADR05 (1000), ADP03 (2500), AAV02 (5000), ASU04 (3500)");
+    Console.WriteLine("  EXHIBICIÓN:   EDR02 (21000), EDP03 (12500), EAV02 (15000), ESU03 (25000)");
+    Console.Write("Código: ");
+    string codigo = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+    Console.WriteLine("Enclaves:");
+    for (int i = 0; i < partida.Enclaves.Count; i++)
+        Console.WriteLine($"  [{i + 1}] {partida.Enclaves[i].Nombre}");
+    Console.Write("Enclave (número): ");
+    if (!int.TryParse(Console.ReadLine(), out int eIdx) || eIdx < 1 || eIdx > partida.Enclaves.Count) return;
+    string enclaveId = partida.Enclaves[eIdx - 1].Id;
+
+    var response = await client.PostAsync(
+        $"{SimUrl}/simulacion/construir-instalacion?codigoInstalacion={Uri.EscapeDataString(codigo)}&enclaveId={Uri.EscapeDataString(enclaveId)}", null);
+
+    if (response.IsSuccessStatusCode)
+        Console.WriteLine(">> Instalación construida.");
+    else
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
 }
 
 async Task VerEstado(HttpClient client)
 {
     var p = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
     Console.WriteLine($"\n--- ESTADO DEL DOMINIO ---");
-    Console.WriteLine($"Solaris: {p?.Solaris:F2} | Agua: {p?.StockAgua:F1} | Especia: {p?.StockEspecia:F1}");
+    Console.WriteLine($"Jugador: {p?.NombreJugador} | Mes: {p?.MesActual} | Solaris: {p?.Solaris:F2}");
+    Console.WriteLine($"Escenario: {p?.Escenario?.Nombre ?? "-"}");
+
     foreach (var e in p?.Enclaves ?? new())
     {
-        Console.WriteLine($"Enclave: {e.Nombre} ({e.TipoEnclave}) - Nivel adquisitivo: {e.NivelAdquisitivo}");
-        Console.WriteLine($"  Visitantes: {e.PoblacionVisitantes}");
+        Console.WriteLine($"\n[{e.TipoEnclave}] {e.Nombre}");
+        Console.WriteLine($"  Hectáreas: {e.Hectareas} | Almacén: {e.Suministros}/{e.Hectareas * 3} | Visitantes: {e.PoblacionVisitantes} | Nivel: {e.NivelAdquisitivo}");
+        if (e.Instalaciones.Count == 0)
+        {
+            Console.WriteLine("  (sin instalaciones)");
+            continue;
+        }
         foreach (var i in e.Instalaciones)
         {
-            Console.WriteLine($"  - Instalación: {i.Nombre} ({i.Tipo})");
+            Console.WriteLine($"  · {i.Nombre} [{i.Tipo}] — Stock: {i.Suministros}/{i.CosteConstruccion} | Criaturas: {i.Criaturas.Count}/{i.CapacidadMaxima}");
             foreach (var c in i.Criaturas.OrderByDescending(c => c.Salud))
-                Console.WriteLine($"    * Criatura: {c.Nombre} | Salud: {c.Salud}% | Edad: {c.EdadActual}");
+                Console.WriteLine($"      - {c.Nombre} | Salud: {c.Salud:F0} | Edad: {c.EdadActual}/{c.EdadAdulta}");
         }
     }
 }
