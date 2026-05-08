@@ -9,5 +9,5 @@ namespace Dune.Domain
     public enum Medio { DESIERTO, AEREO, SUBTERRANEO }
     public enum Alimentacion { RECOLECTOR, DEPREDADOR }
     public enum NivelAdquisitivo { BAJO, MEDIO, ALTO }
-    public enum TipoActividad { CRIANZA, EXHIBICION }  // era ACLIMATACION, corregido
+    public enum TipoActividad { ACLIMATACION, EXHIBICION }
 }

@@ -127,7 +127,7 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                 }
 
                 // 7. Reproducción/clonación — UNA sola vez por instalación, fuera del foreach de criaturas (Sección 3.4 — 20%)
-                if (inst.Tipo == TipoActividad.CRIANZA &&
+                if (inst.Tipo == TipoActividad.ACLIMATACION &&
                     inst.Criaturas.Count < inst.CapacidadMaxima &&
                     rng.NextDouble() < 0.20)
                 {
@@ -261,7 +261,7 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
             Nombre = "Cuenca Experimental de Arrakis",
             Hectareas = 5000,
             Suministros = 20000,
-            TipoEnclave = TipoActividad.CRIANZA,
+            TipoEnclave = TipoActividad.ACLIMATACION,
             VisitantesMensualesBase = 0
         };
 
@@ -332,10 +332,10 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         // Tabla completa de instalaciones (Sección 3.4 del PDF)
         Instalacion? nueva = codigoInstalacion switch
         {
-            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5 },
-            "ADP03" => new Instalacion { Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3 },
-            "AAV02" => new Instalacion { Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2 },
-            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.CRIANZA, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4 },
+            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5 },
+            "ADP03" => new Instalacion { Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3 },
+            "AAV02" => new Instalacion { Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2 },
+            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4 },
             "EDR02" => new Instalacion { Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2 },
             "EDP03" => new Instalacion { Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3 },
             "EAV02" => new Instalacion { Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2 },
