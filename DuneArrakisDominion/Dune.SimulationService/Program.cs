@@ -11,11 +11,21 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.UseCors("AllowUnity");
 
-// ----- ESTADO Y CONCURRENCIA -----
+// ─────────────────────────────────────────────────────────────────────────────
+// ESTADO Y CONCURRENCIA
+// ─────────────────────────────────────────────────────────────────────────────
 SemaphoreSlim _simLock = new SemaphoreSlim(1, 1);
 var partidaActual = new Partida();
 
-// ----- HELPER -----
+// Coste fijo por unidad de suministro (Sección 3.3 del PDF).
+const int COSTE_UNIDAD_SUMINISTRO = 5;
+
+// Coste fijo de descarte vía Bene Tleilax (Sección 3.6 del PDF).
+const int COSTE_DESCARTE_BENE_TLEILAX = 20000;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPER
+// ─────────────────────────────────────────────────────────────────────────────
 static Criatura CrearCriaturaAleatoria(Random rng)
 {
     int tipo = rng.Next(0, 5);
@@ -24,12 +34,14 @@ static Criatura CrearCriaturaAleatoria(Random rng)
         0 => new GusanoDeArena { Nombre = "Gusano de Arena Joven" },
         1 => new TigraLaza { Nombre = "Tigre Laza Joven" },
         2 => new MuadDib { Nombre = "Muad'Dib Joven" },
-        3 => new HalconDelDesierto { Nombre = "Halc�n del Desierto Joven" },
+        3 => new HalconDelDesierto { Nombre = "Halcón del Desierto Joven" },
         _ => new TruchaDeArena { Nombre = "Trucha de Arena Joven" }
     };
 }
 
-// ----- ENDPOINTS -----
+// ─────────────────────────────────────────────────────────────────────────────
+// ENDPOINTS
+// ─────────────────────────────────────────────────────────────────────────────
 
 app.MapGet("/estado-inicial", () => Results.Ok(partidaActual));
 
@@ -55,78 +67,84 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
         partidaActual.RegistroEventos.Add($"--- INICIO MES {partidaActual.MesActual} ---");
 
         double ingresosTotales = 0;
-        double gastosTotales = 0;
         Random rng = new Random();
 
         foreach (var enclave in partidaActual.Enclaves)
         {
-            // 1. Actualizar poblaci�n de visitantes (Secci�n 3.3)
+            // 1. Actualizar la población de visitantes del enclave (Sección 3.3).
             enclave.ActualizarVisitantes();
 
             foreach (var inst in enclave.Instalaciones)
             {
-                // 2. Generar visitantes reales para este mes
+                // 2. Generar visitantes virtuales según la población del enclave.
+                //    NOTA: en el commit 6 esto se simplificará para que TODOS los
+                //    visitantes hereden el NivelAdquisitivo del enclave.
                 inst.VisitantesActuales.Clear();
                 int numVisitantes = Math.Min(enclave.PoblacionVisitantes / 10, 50);
                 for (int i = 0; i < numVisitantes; i++)
                 {
-                    var nivel = (NivelAdquisitivo)rng.Next(0, 3);
-                    inst.VisitantesActuales.Add(new Visitante(nivel));
+                    inst.VisitantesActuales.Add(new Visitante(enclave.NivelAdquisitivo));
                 }
 
-                // 3. Costes de mantenimiento (Secci�n 3.4)
-                gastosTotales += inst.CalcularCosteMantenimiento();
-
-                // 4. Alimentaci�n de criaturas � .ToList() para evitar excepci�n si se modifica la lista
+                // 3. Alimentación de criaturas — los suministros salen del stock
+                //    INTERNO de la instalación (Sección 3.4). Si no hay, la criatura
+                //    no come y aplica la penalización por subalimentación.
                 foreach (var criatura in inst.Criaturas.ToList())
                 {
-                    if (criatura.Salud > 0)
+                    if (criatura.Salud <= 0) continue;
+
+                    double requerida = criatura.CalcularIngestaRequerida(inst.Tipo);
+                    int requeridaInt = (int)Math.Ceiling(requerida);
+
+                    if (inst.Suministros >= requeridaInt)
                     {
-                        double requerida = criatura.CalcularIngestaRequerida(inst.Tipo);
-                        double costeAgua = requerida * 0.2;
-                        double costeEspecia = requerida * 0.1;
+                        inst.Suministros -= requeridaInt;
+                        criatura.Alimentar(requerida, inst.Tipo);
+                    }
+                    else if (inst.Suministros > 0)
+                    {
+                        // Alimentación parcial: consumimos lo que hay.
+                        double parcial = inst.Suministros;
+                        inst.Suministros = 0;
+                        criatura.Alimentar(parcial, inst.Tipo);
+                        partidaActual.RegistroEventos.Add(
+                            $"ALERTA: alimentación parcial de {criatura.Nombre} en {inst.Nombre} ({parcial:F0}/{requerida:F0} unidades).");
+                    }
+                    else
+                    {
+                        // No hay suministros: la criatura come 0 y se penaliza.
+                        criatura.Alimentar(0, inst.Tipo);
+                        partidaActual.RegistroEventos.Add(
+                            $"ALERTA: sin suministros para {criatura.Nombre} en {inst.Nombre}.");
+                    }
 
-                        if (partidaActual.StockAgua >= costeAgua && partidaActual.StockEspecia >= costeEspecia)
-                        {
-                            partidaActual.StockAgua -= costeAgua;
-                            partidaActual.StockEspecia -= costeEspecia;
-                            criatura.Alimentar(requerida, inst.Tipo);
-                        }
-                        else
-                        {
-                            // Penalizaci�n por falta de recursos (Secci�n 3.5)
-                            criatura.Alimentar(0, inst.Tipo);
-                            partidaActual.RegistroEventos.Add(
-                                $"ALERTA: Falta de recursos para {criatura.Nombre}");
-                        }
+                    criatura.EdadActual++;
 
-                        criatura.EdadActual++;
-
-                        // Descarte de criaturas en letargo (Secci�n 3.6 � coste fijo 20.000 solaris)
-                        if (criatura.EnLetargo)
-                        {
-                            double costeDescarte = 20000;
-                            partidaActual.Solaris -= costeDescarte;
-                            partidaActual.RegistroEventos.Add(
-                                $"DESCARTE: {criatura.Nombre} transferida a Bene Tleilax. Coste: {costeDescarte} Solaris.");
-                        }
+                    // Descarte de criaturas en letargo (Sección 3.6 — coste fijo 20.000).
+                    if (criatura.EnLetargo)
+                    {
+                        partidaActual.Solaris -= COSTE_DESCARTE_BENE_TLEILAX;
+                        partidaActual.RegistroEventos.Add(
+                            $"DESCARTE: {criatura.Nombre} transferida a Bene Tleilax. Coste: {COSTE_DESCARTE_BENE_TLEILAX} Solaris.");
                     }
                 }
 
-                // 5. Retirar criaturas en letargo ANTES de calcular donaciones y reproducci�n
+                // 4. Retirar criaturas en letargo ANTES de calcular donaciones y reproducción.
                 inst.Criaturas.RemoveAll(c => c.EnLetargo);
 
-                // 6. Donaciones � UNA sola vez por instalaci�n, fuera del foreach de criaturas (Secci�n 3.4)
+                // 5. Donaciones — solo en exhibición (Sección 3.4).
                 if (inst.Tipo == TipoActividad.EXHIBICION)
                 {
-                    double donacion = inst.CalcularDonacionesTotales();
+                    double donacion = inst.CalcularDonacionesTotales(enclave.NivelAdquisitivo);
                     ingresosTotales += donacion;
                     if (donacion > 0)
                         partidaActual.RegistroEventos.Add(
                             $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris");
                 }
 
-                // 7. Reproducci�n/clonaci�n � UNA sola vez por instalaci�n, fuera del foreach de criaturas (Secci�n 3.4 � 20%)
+                // 6. Reproducción/clonación — solo en aclimatación, 20% de probabilidad
+                //    si hay capacidad libre (Sección 3.4). En el commit 5 filtraremos
+                //    por compatibilidad de Medio y Alimentación.
                 if (inst.Tipo == TipoActividad.ACLIMATACION &&
                     inst.Criaturas.Count < inst.CapacidadMaxima &&
                     rng.NextDouble() < 0.20)
@@ -139,12 +157,12 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
             }
         }
 
-        // 8. Balance econ�mico final
-        partidaActual.Solaris += (ingresosTotales - gastosTotales);
+        // 7. Balance final del mes.
+        partidaActual.Solaris += ingresosTotales;
         partidaActual.RegistroEventos.Add(
-            $"Finanzas mes {partidaActual.MesActual}: +{ingresosTotales:F2} ingresos | -{gastosTotales:F2} gastos");
+            $"Finanzas mes {partidaActual.MesActual}: +{ingresosTotales:F2} ingresos por donaciones.");
 
-        // 9. Persistencia autom�tica
+        // 8. Persistencia automática.
         var client = clientFactory.CreateClient();
         await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
 
@@ -153,29 +171,77 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
     finally { _simLock.Release(); }
 });
 
-app.MapPost("/simulacion/comprar-recursos", async (double agua, double especia, IHttpClientFactory clientFactory) =>
+// Compra de suministros al almacén general de un ENCLAVE concreto
+// (Sección 3.3: coste fijo 5 solaris/unidad, capacidad máxima del almacén = 3 × hectáreas).
+app.MapPost("/simulacion/comprar-suministros", async (string enclaveId, int cantidad, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
     try
     {
-        double coste = (agua * 2) + (especia * 10);
-        if (partidaActual.Solaris < coste)
-            return Results.BadRequest("Solaris insuficientes.");
+        if (cantidad <= 0)
+            return Results.BadRequest("La cantidad debe ser mayor que 0.");
 
-        // Validar l�mite de almac�n por enclave (Secci�n 3.3: m�ximo = 3 � hect�reas)
-        foreach (var enclave in partidaActual.Enclaves)
-        {
-            int capacidadMaxima = enclave.Hectareas * 3;
-            if ((partidaActual.StockAgua + agua + partidaActual.StockEspecia + especia) > capacidadMaxima)
-                return Results.BadRequest(
-                    $"Capacidad m�xima del almac�n superada en {enclave.Nombre}. M�ximo: {capacidadMaxima} unidades.");
-        }
+        var enclave = partidaActual.Enclaves.FirstOrDefault(e => e.Id == enclaveId);
+        if (enclave == null)
+            return Results.NotFound("Enclave no encontrado.");
+
+        int coste = cantidad * COSTE_UNIDAD_SUMINISTRO;
+        if (partidaActual.Solaris < coste)
+            return Results.BadRequest($"Solaris insuficientes. Coste: {coste}, disponibles: {partidaActual.Solaris}.");
+
+        if (enclave.Suministros + cantidad > enclave.CapacidadAlmacen)
+            return Results.BadRequest(
+                $"Capacidad del almacén de {enclave.Nombre} superada. Espacio libre: {enclave.EspacioLibreEnAlmacen} unidades.");
 
         partidaActual.Solaris -= coste;
-        partidaActual.StockAgua += agua;
-        partidaActual.StockEspecia += especia;
+        enclave.Suministros += cantidad;
+        partidaActual.RegistroEventos.Add(
+            $"Compra de {cantidad} unidades de suministro para {enclave.Nombre}. Coste: {coste} Solaris.");
 
-        return Results.Ok(partidaActual);
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(new { mensaje = "Suministros comprados.", coste, almacen = enclave.Suministros, solarisRestantes = partidaActual.Solaris });
+    }
+    finally { _simLock.Release(); }
+});
+
+// Movimiento gratuito de suministros del almacén general del enclave al stock
+// interno de una instalación (Sección 3.3: gratuito; tope = coste de construcción).
+app.MapPost("/simulacion/mover-suministros", async (string enclaveId, string instalacionId, int cantidad, IHttpClientFactory clientFactory) =>
+{
+    await _simLock.WaitAsync();
+    try
+    {
+        if (cantidad <= 0)
+            return Results.BadRequest("La cantidad debe ser mayor que 0.");
+
+        var enclave = partidaActual.Enclaves.FirstOrDefault(e => e.Id == enclaveId);
+        if (enclave == null)
+            return Results.NotFound("Enclave no encontrado.");
+
+        var inst = enclave.Instalaciones.FirstOrDefault(i => i.Id == instalacionId);
+        if (inst == null)
+            return Results.NotFound("Instalación no encontrada en este enclave.");
+
+        if (enclave.Suministros < cantidad)
+            return Results.BadRequest(
+                $"Suministros insuficientes en el almacén de {enclave.Nombre} (disponibles: {enclave.Suministros}).");
+
+        // Tope: ninguna instalación puede superar en suministros el valor de su coste de construcción.
+        if (inst.Suministros + cantidad > inst.CosteConstruccion)
+            return Results.BadRequest(
+                $"La instalación {inst.Nombre} no puede almacenar más de {inst.CosteConstruccion} unidades (actual: {inst.Suministros}).");
+
+        enclave.Suministros -= cantidad;
+        inst.Suministros += cantidad;
+        partidaActual.RegistroEventos.Add(
+            $"Movidas {cantidad} unidades de suministro de {enclave.Nombre} a {inst.Nombre}.");
+
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(new { mensaje = "Suministros movidos.", almacen = enclave.Suministros, stockInstalacion = inst.Suministros });
     }
     finally { _simLock.Release(); }
 });
@@ -197,23 +263,21 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
             }
         }
 
-        if (origen == null) return Results.NotFound("Instalaci�n de origen no encontrada.");
-        if (destino == null) return Results.NotFound("Instalaci�n de destino no encontrada.");
+        if (origen == null) return Results.NotFound("Instalación de origen no encontrada.");
+        if (destino == null) return Results.NotFound("Instalación de destino no encontrada.");
 
         var criatura = origen.Criaturas.FirstOrDefault(c => c.Id == criaturaId);
-        if (criatura == null) return Results.NotFound("Criatura no encontrada en la instalaci�n de origen.");
+        if (criatura == null) return Results.NotFound("Criatura no encontrada en la instalación de origen.");
 
-        // Validaciones del enunciado (Secci�n 3.6)
         if (criatura.EdadActual < criatura.EdadAdulta)
-            return Results.BadRequest("La criatura no es adulta todav�a.");
+            return Results.BadRequest("La criatura no es adulta todavía.");
 
         if (criatura.Salud < 75)
-            return Results.BadRequest($"Salud insuficiente para traslado: {criatura.Salud}/100 (m�nimo 75).");
+            return Results.BadRequest($"Salud insuficiente para traslado: {criatura.Salud}/100 (mínimo 75).");
 
         if (destino.Criaturas.Count >= destino.CapacidadMaxima)
-            return Results.BadRequest("La instalaci�n de destino est� completa.");
+            return Results.BadRequest("La instalación de destino está completa.");
 
-        // Calcular coste de traslado (Secci�n 3.6)
         double sigma = criatura.Habitat switch
         {
             Medio.DESIERTO => 5,
@@ -227,7 +291,6 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
             return Results.BadRequest(
                 $"Solaris insuficientes. Coste: {costeTraslado:F2}, disponibles: {partidaActual.Solaris:F2}.");
 
-        // Ejecutar traslado
         partidaActual.Solaris -= costeTraslado;
         origen.Criaturas.Remove(criatura);
         destino.Criaturas.Add(criatura);
@@ -241,12 +304,12 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
     }
     finally { _simLock.Release(); }
 });
+
 app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string nombreEscenario, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
     try
     {
-        // Seleccionar escenario
         Escenario escenario = nombreEscenario switch
         {
             "Arrakeen" => Escenario.Arrakeen(),
@@ -255,7 +318,7 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
             _ => Escenario.Arrakeen()
         };
 
-        // Enclave de aclimataci�n � com�n a todos los escenarios (Secci�n 3.2)
+        // Cuenca Experimental de Arrakis — enclave de aclimatación común (Sección 3.2 / 3.3).
         var enclaveAclimatacion = new Enclave
         {
             Nombre = "Cuenca Experimental de Arrakis",
@@ -265,7 +328,6 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
             VisitantesMensualesBase = 0
         };
 
-        // Enclave de exhibici�n seg�n escenario
         var enclaveExhibicion = nombreEscenario switch
         {
             "Arrakeen" => new Enclave
@@ -304,8 +366,6 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
         {
             NombreJugador = nombreJugador,
             Solaris = escenario.SolarisIniciales,
-            StockAgua = 1000,
-            StockEspecia = 500,
             Escenario = escenario,
             Enclaves = new List<Enclave> { enclaveAclimatacion, enclaveExhibicion }
         };
@@ -320,6 +380,7 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
     }
     finally { _simLock.Release(); }
 });
+
 app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion, string enclaveId, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
@@ -329,28 +390,28 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         if (enclave == null)
             return Results.NotFound("Enclave no encontrado.");
 
-        // Tabla completa de instalaciones (Secci�n 3.4 del PDF)
+        // Tabla completa de instalaciones (Sección 3.4 del PDF).
+        // Cada instalación nace con SuministrosIniciales según la tabla.
         Instalacion? nueva = codigoInstalacion switch
         {
-            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimataci�n)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5 },
-            "ADP03" => new Instalacion { Nombre = "Escudo Est�tico (Aclimataci�n)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3 },
-            "AAV02" => new Instalacion { Nombre = "C�pula Blindada (Aclimataci�n)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2 },
-            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimataci�n)", Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4 },
-            "EDR02" => new Instalacion { Nombre = "Roca Sellada (Exhibici�n)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2 },
-            "EDP03" => new Instalacion { Nombre = "Escudo Est�tico (Exhibici�n)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3 },
-            "EAV02" => new Instalacion { Nombre = "C�pula Blindada (Exhibici�n)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2 },
-            "ESU03" => new Instalacion { Nombre = "Pozo Reforzado (Exhibici�n)", Tipo = TipoActividad.EXHIBICION, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3 },
+            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimatación)",      Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 1000,  Hectareas = 10,  CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
+            "ADP03" => new Instalacion { Nombre = "Escudo Estático (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 2500,  Hectareas = 50,  CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
+            "AAV02" => new Instalacion { Nombre = "Cúpula Blindada (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 5000,  Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
+            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimatación)",    Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 3500,  Hectareas = 25,  CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
+            "EDR02" => new Instalacion { Nombre = "Roca Sellada (Exhibición)",        Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "EDP03" => new Instalacion { Nombre = "Escudo Estático (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
+            "EAV02" => new Instalacion { Nombre = "Cúpula Blindada (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "ESU03" => new Instalacion { Nombre = "Pozo Reforzado (Exhibición)",      Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
             _ => null
         };
 
         if (nueva == null)
-            return Results.BadRequest($"C�digo de instalaci�n desconocido: {codigoInstalacion}");
+            return Results.BadRequest($"Código de instalación desconocido: {codigoInstalacion}");
 
         if (partidaActual.Solaris < nueva.CosteConstruccion)
             return Results.BadRequest(
                 $"Solaris insuficientes. Coste: {nueva.CosteConstruccion}, disponibles: {partidaActual.Solaris}");
 
-        // Validar que haya hect�reas libres en el enclave
         int hectareasUsadas = enclave.Instalaciones.Sum(i => i.Hectareas);
         if (hectareasUsadas + nueva.Hectareas > enclave.Hectareas)
             return Results.BadRequest(
@@ -359,7 +420,7 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         partidaActual.Solaris -= nueva.CosteConstruccion;
         enclave.Instalaciones.Add(nueva);
         partidaActual.RegistroEventos.Add(
-            $"Construida {nueva.Nombre} en {enclave.Nombre}. Coste: {nueva.CosteConstruccion} Solaris.");
+            $"Construida {nueva.Nombre} en {enclave.Nombre}. Coste: {nueva.CosteConstruccion} Solaris. Suministros iniciales: {nueva.SuministrosIniciales}.");
 
         var client = clientFactory.CreateClient();
         await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
@@ -368,4 +429,5 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
     }
     finally { _simLock.Release(); }
 });
+
 app.Run();
