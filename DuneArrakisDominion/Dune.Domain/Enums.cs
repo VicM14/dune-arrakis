@@ -11,7 +11,7 @@ public enum TipoCriatura
 
 public enum TipoActividad
 {
-    CRIANZA,
+    ACLIMATACION,
     EXHIBICION
 }
 
