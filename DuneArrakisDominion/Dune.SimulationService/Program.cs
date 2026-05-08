@@ -1,6 +1,7 @@
 using Dune.Domain;
 using System.Net.Http.Json;
 using System.Threading;
+using Dune.Domain.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
