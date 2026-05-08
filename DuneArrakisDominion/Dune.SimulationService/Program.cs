@@ -24,19 +24,38 @@ const int COSTE_UNIDAD_SUMINISTRO = 5;
 const int COSTE_DESCARTE_BENE_TLEILAX = 20000;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HELPER
 // ─────────────────────────────────────────────────────────────────────────────
-static Criatura CrearCriaturaAleatoria(Random rng)
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// <summary>
+/// Crea una criatura aleatoria entre las que son COMPATIBLES con el medio y la
+/// alimentación de la instalación destino. Si ninguna especie de las cinco del
+/// PDF cumple con la combinación (no debería ocurrir con las 8 instalaciones
+/// y 5 criaturas del PDF), devuelve null.
+/// </summary>
+static Criatura? CrearCriaturaAleatoriaParaInstalacion(Random rng, Instalacion inst)
 {
-    int tipo = rng.Next(0, 5);
-    return tipo switch
+    // Lista de fábricas con cada especie del PDF y sus rasgos.
+    var candidatas = new List<(Func<Criatura> factory, Medio habitat, Alimentacion dieta)>
     {
-        0 => new GusanoDeArena { Nombre = "Gusano de Arena Joven" },
-        1 => new TigraLaza { Nombre = "Tigre Laza Joven" },
-        2 => new MuadDib { Nombre = "Muad'Dib Joven" },
-        3 => new HalconDelDesierto { Nombre = "Halcón del Desierto Joven" },
-        _ => new TruchaDeArena { Nombre = "Trucha de Arena Joven" }
+        (() => new GusanoDeArena       { Nombre = "Gusano de Arena Joven" },     Medio.SUBTERRANEO, Alimentacion.DEPREDADOR),
+        (() => new TigraLaza           { Nombre = "Tigre Laza Joven" },          Medio.DESIERTO,    Alimentacion.DEPREDADOR),
+        (() => new MuadDib             { Nombre = "Muad'Dib Joven" },            Medio.DESIERTO,    Alimentacion.RECOLECTOR),
+        (() => new HalconDelDesierto   { Nombre = "Halcón del Desierto Joven" }, Medio.AEREO,       Alimentacion.DEPREDADOR),
+        (() => new TruchaDeArena       { Nombre = "Trucha de Arena Joven" },     Medio.SUBTERRANEO, Alimentacion.RECOLECTOR)
     };
+
+    // Filtramos por compatibilidad (Sección 3.4 del PDF: cada instalación está
+    // preparada para un medio concreto y un patrón de alimentación específico).
+    var compatibles = candidatas
+        .Where(t => t.habitat == inst.Medio && t.dieta == inst.Alimentacion)
+        .ToList();
+
+    if (compatibles.Count == 0) return null;
+
+    var elegida = compatibles[rng.Next(compatibles.Count)];
+    return elegida.factory();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -143,16 +162,19 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                 }
 
                 // 6. Reproducción/clonación — solo en aclimatación, 20% de probabilidad
-                //    si hay capacidad libre (Sección 3.4). En el commit 5 filtraremos
-                //    por compatibilidad de Medio y Alimentación.
+                //    si hay capacidad libre, y SOLO entre las especies compatibles
+                //    con el medio y la alimentación de la instalación (Sección 3.4).
                 if (inst.Tipo == TipoActividad.ACLIMATACION &&
                     inst.Criaturas.Count < inst.CapacidadMaxima &&
                     rng.NextDouble() < 0.20)
                 {
-                    var nuevaCriatura = CrearCriaturaAleatoria(rng);
-                    inst.Criaturas.Add(nuevaCriatura);
-                    partidaActual.RegistroEventos.Add(
-                        $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                    var nuevaCriatura = CrearCriaturaAleatoriaParaInstalacion(rng, inst);
+                    if (nuevaCriatura != null)
+                    {
+                        inst.Criaturas.Add(nuevaCriatura);
+                        partidaActual.RegistroEventos.Add(
+                            $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                    }
                 }
             }
         }
@@ -268,6 +290,22 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
 
         var criatura = origen.Criaturas.FirstOrDefault(c => c.Id == criaturaId);
         if (criatura == null) return Results.NotFound("Criatura no encontrada en la instalación de origen.");
+
+        // Sección 3.6 del PDF: traslados sólo de ACLIMATACION → EXHIBICION.
+        if (origen.Tipo != TipoActividad.ACLIMATACION)
+            return Results.BadRequest("La instalación de origen debe ser de aclimatación.");
+
+        if (destino.Tipo != TipoActividad.EXHIBICION)
+            return Results.BadRequest("La instalación de destino debe ser de exhibición.");
+
+        // Compatibilidad criatura ↔ instalación destino (Sección 3.4 del PDF).
+        if (criatura.Habitat != destino.Medio)
+            return Results.BadRequest(
+                $"Medio incompatible: la criatura es de medio {criatura.Habitat} y la instalación destino es de medio {destino.Medio}.");
+
+        if (criatura.Dieta != destino.Alimentacion)
+            return Results.BadRequest(
+                $"Alimentación incompatible: la criatura es {criatura.Dieta} y la instalación destino es {destino.Alimentacion}.");
 
         if (criatura.EdadActual < criatura.EdadAdulta)
             return Results.BadRequest("La criatura no es adulta todavía.");
@@ -394,17 +432,16 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         // Cada instalación nace con SuministrosIniciales según la tabla.
         Instalacion? nueva = codigoInstalacion switch
         {
-            "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
-            "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
-            "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
-            "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
-            "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
-            "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
-            "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
-            "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
+            "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)",      Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 1000,  Hectareas = 10,  CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
+            "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500,  Hectareas = 50,  CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
+            "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000,  Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
+            "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)",    Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 3500,  Hectareas = 25,  CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
+            "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)",        Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
+            "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)",      Tipo = TipoActividad.EXHIBICION,   Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
             _ => null
         };
-
 
         if (nueva == null)
             return Results.BadRequest($"Código de instalación desconocido: {codigoInstalacion}");
