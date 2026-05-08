@@ -39,12 +39,27 @@ public class Instalacion
     public int SuministrosIniciales { get; set; } = 0;
 
     /// <summary>
-    /// Cálculo de donaciones de la instalación.
-    /// El factor σ depende del nivel adquisitivo del enclave que contiene
-    /// esta instalación; lo recibimos por parámetro para no acoplar a Enclave.
+    /// Calcula las donaciones totales que esta instalación de exhibición
+    /// recibe en el mes actual, siguiendo la fórmula del PDF (Sección 3.4):
+    ///
+    ///     donacion_por_visitante = 10 × (salud/100) × (edad/edadAdulta) × σ
+    ///
+    /// donde σ depende del nivel adquisitivo del ENCLAVE (no del visitante)
+    /// y la criatura usada en el cálculo es la favorita: aquella con mayor
+    /// salud entre las vivas. La donación total se obtiene multiplicando por
+    /// el número de visitantes del enclave que han llegado este mes.
     /// </summary>
-    public double CalcularDonacionesTotales(NivelAdquisitivo nivelEnclave)
+    public double CalcularDonacionesTotales(int numVisitantes, NivelAdquisitivo nivelEnclave)
     {
+        if (numVisitantes <= 0) return 0;
+
+        var favorita = Criaturas
+            .Where(c => c.Salud > 0 && c.EdadAdulta > 0)
+            .OrderByDescending(c => c.Salud)
+            .FirstOrDefault();
+
+        if (favorita == null) return 0;
+
         double sigma = nivelEnclave switch
         {
             NivelAdquisitivo.BAJO => 1,
@@ -53,25 +68,16 @@ public class Instalacion
             _ => 1
         };
 
-        double total = 0;
-        foreach (var v in VisitantesActuales)
-        {
-            var favorita = Criaturas
-                .Where(c => c.Salud > 0)
-                .OrderByDescending(c => c.Salud)
-                .FirstOrDefault();
+        double donacionPorVisitante = 10.0
+            * (favorita.Salud / 100.0)
+            * ((double)favorita.EdadActual / favorita.EdadAdulta)
+            * sigma;
 
-            if (favorita == null) continue;
+        // Cada visitante que recibe la instalación elige a la criatura favorita
+        // y dona. Modelamos el contador "VecesFavorita" con el número total
+        // de visitantes que la han elegido este mes.
+        favorita.VecesFavorita += numVisitantes;
 
-            // Fórmula del PDF: donacion = 10 × (salud/100) × (edad/edadAdulta) × σ
-            double donacion = 10
-                * (favorita.Salud / 100.0)
-                * ((double)favorita.EdadActual / favorita.EdadAdulta)
-                * sigma;
-
-            favorita.VecesFavorita++;
-            total += donacion;
-        }
-        return total;
+        return donacionPorVisitante * numVisitantes;
     }
 }

@@ -93,16 +93,24 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
             // 1. Actualizar la población de visitantes del enclave (Sección 3.3).
             enclave.ActualizarVisitantes();
 
+            // Total de hectáreas ocupadas por instalaciones de exhibición en el enclave.
+            // Lo usamos para repartir proporcionalmente la población de visitantes
+            // entre las instalaciones de exhibición (las más grandes atraen más).
+            int hectareasExhibicion = enclave.Instalaciones
+                .Where(i => i.Tipo == TipoActividad.EXHIBICION)
+                .Sum(i => i.Hectareas);
+
             foreach (var inst in enclave.Instalaciones)
             {
-                // 2. Generar visitantes virtuales según la población del enclave.
-                //    NOTA: en el commit 6 esto se simplificará para que TODOS los
-                //    visitantes hereden el NivelAdquisitivo del enclave.
-                inst.VisitantesActuales.Clear();
-                int numVisitantes = Math.Min(enclave.PoblacionVisitantes / 10, 50);
-                for (int i = 0; i < numVisitantes; i++)
+                // 2. Calcular cuántos visitantes corresponden a esta instalación.
+                //    En aclimatación = 0 (no hay público).
+                //    En exhibición = porción proporcional a las hectáreas de la
+                //    instalación sobre el total de hectáreas de exhibición del enclave.
+                int visitantesInstalacion = 0;
+                if (inst.Tipo == TipoActividad.EXHIBICION && hectareasExhibicion > 0)
                 {
-                    inst.VisitantesActuales.Add(new Visitante(enclave.NivelAdquisitivo));
+                    visitantesInstalacion = (int)((long)enclave.PoblacionVisitantes
+                                                  * inst.Hectareas / hectareasExhibicion);
                 }
 
                 // 3. Alimentación de criaturas — los suministros salen del stock
@@ -152,13 +160,16 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                 inst.Criaturas.RemoveAll(c => c.EnLetargo);
 
                 // 5. Donaciones — solo en exhibición (Sección 3.4).
+                //    Las donaciones se calculan sobre la población de visitantes
+                //    del enclave repartida proporcionalmente entre las instalaciones,
+                //    usando el nivel adquisitivo del enclave como factor σ.
                 if (inst.Tipo == TipoActividad.EXHIBICION)
                 {
-                    double donacion = inst.CalcularDonacionesTotales(enclave.NivelAdquisitivo);
+                    double donacion = inst.CalcularDonacionesTotales(visitantesInstalacion, enclave.NivelAdquisitivo);
                     ingresosTotales += donacion;
                     if (donacion > 0)
                         partidaActual.RegistroEventos.Add(
-                            $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris");
+                            $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris ({visitantesInstalacion} visitantes)");
                 }
 
                 // 6. Reproducción/clonación — solo en aclimatación, 20% de probabilidad
