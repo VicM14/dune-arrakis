@@ -394,16 +394,17 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         // Cada instalación nace con SuministrosIniciales según la tabla.
         Instalacion? nueva = codigoInstalacion switch
         {
-            "ADR05" => new Instalacion { Nombre = "Roca Sellada (Aclimatación)",      Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 1000,  Hectareas = 10,  CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
-            "ADP03" => new Instalacion { Nombre = "Escudo Estático (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 2500,  Hectareas = 50,  CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
-            "AAV02" => new Instalacion { Nombre = "Cúpula Blindada (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 5000,  Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
-            "ASU04" => new Instalacion { Nombre = "Pozo Reforzado (Aclimatación)",    Tipo = TipoActividad.ACLIMATACION, CosteConstruccion = 3500,  Hectareas = 25,  CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
-            "EDR02" => new Instalacion { Nombre = "Roca Sellada (Exhibición)",        Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
-            "EDP03" => new Instalacion { Nombre = "Escudo Estático (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
-            "EAV02" => new Instalacion { Nombre = "Cúpula Blindada (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
-            "ESU03" => new Instalacion { Nombre = "Pozo Reforzado (Exhibición)",      Tipo = TipoActividad.EXHIBICION,   CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
+            "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
+            "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
+            "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
+            "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
+            "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
+            "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
+            "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
+            "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
             _ => null
         };
+
 
         if (nueva == null)
             return Results.BadRequest($"Código de instalación desconocido: {codigoInstalacion}");

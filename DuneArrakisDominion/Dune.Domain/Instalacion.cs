@@ -3,6 +3,10 @@ namespace Dune.Domain;
 public class Instalacion
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    /// <summary>Código de instalación según la tabla del PDF: ADR05, ADP03, AAV02, ASU04, EDR02, EDP03, EAV02, ESU03.</summary>
+    public string Codigo { get; set; } = string.Empty;
+
     public string Nombre { get; set; } = string.Empty;
     public TipoActividad Tipo { get; set; }
     public int CapacidadMaxima { get; set; } = 0;
@@ -10,6 +14,15 @@ public class Instalacion
     public List<Visitante> VisitantesActuales { get; set; } = new();
     public int Hectareas { get; set; }
     public int CosteConstruccion { get; set; }
+
+    /// <summary>Medio para el que está preparada la instalación (Sección 3.4 del PDF).</summary>
+    public Medio Medio { get; set; }
+
+    /// <summary>Patrón de alimentación de las criaturas que la instalación aloja (Sección 3.4 del PDF).</summary>
+    public Alimentacion Alimentacion { get; set; }
+
+    /// <summary>Tipo de recinto físico (Sección 3.4 del PDF).</summary>
+    public TipoRecinto TipoRecinto { get; set; }
 
     /// <summary>
     /// Stock interno de suministros de la instalación.
