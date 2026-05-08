@@ -24,19 +24,38 @@ const int COSTE_UNIDAD_SUMINISTRO = 5;
 const int COSTE_DESCARTE_BENE_TLEILAX = 20000;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HELPER
 // ─────────────────────────────────────────────────────────────────────────────
-static Criatura CrearCriaturaAleatoria(Random rng)
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// <summary>
+/// Crea una criatura aleatoria entre las que son COMPATIBLES con el medio y la
+/// alimentación de la instalación destino. Si ninguna especie de las cinco del
+/// PDF cumple con la combinación (no debería ocurrir con las 8 instalaciones
+/// y 5 criaturas del PDF), devuelve null.
+/// </summary>
+static Criatura? CrearCriaturaAleatoriaParaInstalacion(Random rng, Instalacion inst)
 {
-    int tipo = rng.Next(0, 5);
-    return tipo switch
+    // Lista de fábricas con cada especie del PDF y sus rasgos.
+    var candidatas = new List<(Func<Criatura> factory, Medio habitat, Alimentacion dieta)>
     {
-        0 => new GusanoDeArena { Nombre = "Gusano de Arena Joven" },
-        1 => new TigraLaza { Nombre = "Tigre Laza Joven" },
-        2 => new MuadDib { Nombre = "Muad'Dib Joven" },
-        3 => new HalconDelDesierto { Nombre = "Halcón del Desierto Joven" },
-        _ => new TruchaDeArena { Nombre = "Trucha de Arena Joven" }
+        (() => new GusanoDeArena       { Nombre = "Gusano de Arena Joven" },     Medio.SUBTERRANEO, Alimentacion.DEPREDADOR),
+        (() => new TigraLaza           { Nombre = "Tigre Laza Joven" },          Medio.DESIERTO,    Alimentacion.DEPREDADOR),
+        (() => new MuadDib             { Nombre = "Muad'Dib Joven" },            Medio.DESIERTO,    Alimentacion.RECOLECTOR),
+        (() => new HalconDelDesierto   { Nombre = "Halcón del Desierto Joven" }, Medio.AEREO,       Alimentacion.DEPREDADOR),
+        (() => new TruchaDeArena       { Nombre = "Trucha de Arena Joven" },     Medio.SUBTERRANEO, Alimentacion.RECOLECTOR)
     };
+
+    // Filtramos por compatibilidad (Sección 3.4 del PDF: cada instalación está
+    // preparada para un medio concreto y un patrón de alimentación específico).
+    var compatibles = candidatas
+        .Where(t => t.habitat == inst.Medio && t.dieta == inst.Alimentacion)
+        .ToList();
+
+    if (compatibles.Count == 0) return null;
+
+    var elegida = compatibles[rng.Next(compatibles.Count)];
+    return elegida.factory();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -74,16 +93,24 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
             // 1. Actualizar la población de visitantes del enclave (Sección 3.3).
             enclave.ActualizarVisitantes();
 
+            // Total de hectáreas ocupadas por instalaciones de exhibición en el enclave.
+            // Lo usamos para repartir proporcionalmente la población de visitantes
+            // entre las instalaciones de exhibición (las más grandes atraen más).
+            int hectareasExhibicion = enclave.Instalaciones
+                .Where(i => i.Tipo == TipoActividad.EXHIBICION)
+                .Sum(i => i.Hectareas);
+
             foreach (var inst in enclave.Instalaciones)
             {
-                // 2. Generar visitantes virtuales según la población del enclave.
-                //    NOTA: en el commit 6 esto se simplificará para que TODOS los
-                //    visitantes hereden el NivelAdquisitivo del enclave.
-                inst.VisitantesActuales.Clear();
-                int numVisitantes = Math.Min(enclave.PoblacionVisitantes / 10, 50);
-                for (int i = 0; i < numVisitantes; i++)
+                // 2. Calcular cuántos visitantes corresponden a esta instalación.
+                //    En aclimatación = 0 (no hay público).
+                //    En exhibición = porción proporcional a las hectáreas de la
+                //    instalación sobre el total de hectáreas de exhibición del enclave.
+                int visitantesInstalacion = 0;
+                if (inst.Tipo == TipoActividad.EXHIBICION && hectareasExhibicion > 0)
                 {
-                    inst.VisitantesActuales.Add(new Visitante(enclave.NivelAdquisitivo));
+                    visitantesInstalacion = (int)((long)enclave.PoblacionVisitantes
+                                                  * inst.Hectareas / hectareasExhibicion);
                 }
 
                 // 3. Alimentación de criaturas — los suministros salen del stock
@@ -133,26 +160,32 @@ app.MapPost("/simulacion/ejecutar-ronda", async (IHttpClientFactory clientFactor
                 inst.Criaturas.RemoveAll(c => c.EnLetargo);
 
                 // 5. Donaciones — solo en exhibición (Sección 3.4).
+                //    Las donaciones se calculan sobre la población de visitantes
+                //    del enclave repartida proporcionalmente entre las instalaciones,
+                //    usando el nivel adquisitivo del enclave como factor σ.
                 if (inst.Tipo == TipoActividad.EXHIBICION)
                 {
-                    double donacion = inst.CalcularDonacionesTotales(enclave.NivelAdquisitivo);
+                    double donacion = inst.CalcularDonacionesTotales(visitantesInstalacion, enclave.NivelAdquisitivo);
                     ingresosTotales += donacion;
                     if (donacion > 0)
                         partidaActual.RegistroEventos.Add(
-                            $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris");
+                            $"Donaciones en {inst.Nombre}: +{donacion:F2} Solaris ({visitantesInstalacion} visitantes)");
                 }
 
                 // 6. Reproducción/clonación — solo en aclimatación, 20% de probabilidad
-                //    si hay capacidad libre (Sección 3.4). En el commit 5 filtraremos
-                //    por compatibilidad de Medio y Alimentación.
+                //    si hay capacidad libre, y SOLO entre las especies compatibles
+                //    con el medio y la alimentación de la instalación (Sección 3.4).
                 if (inst.Tipo == TipoActividad.ACLIMATACION &&
                     inst.Criaturas.Count < inst.CapacidadMaxima &&
                     rng.NextDouble() < 0.20)
                 {
-                    var nuevaCriatura = CrearCriaturaAleatoria(rng);
-                    inst.Criaturas.Add(nuevaCriatura);
-                    partidaActual.RegistroEventos.Add(
-                        $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                    var nuevaCriatura = CrearCriaturaAleatoriaParaInstalacion(rng, inst);
+                    if (nuevaCriatura != null)
+                    {
+                        inst.Criaturas.Add(nuevaCriatura);
+                        partidaActual.RegistroEventos.Add(
+                            $"Nueva criatura generada en {inst.Nombre}: {nuevaCriatura.Nombre}");
+                    }
                 }
             }
         }
@@ -269,6 +302,22 @@ app.MapPost("/simulacion/trasladar-criatura", async (string criaturaId, string i
         var criatura = origen.Criaturas.FirstOrDefault(c => c.Id == criaturaId);
         if (criatura == null) return Results.NotFound("Criatura no encontrada en la instalación de origen.");
 
+        // Sección 3.6 del PDF: traslados sólo de ACLIMATACION → EXHIBICION.
+        if (origen.Tipo != TipoActividad.ACLIMATACION)
+            return Results.BadRequest("La instalación de origen debe ser de aclimatación.");
+
+        if (destino.Tipo != TipoActividad.EXHIBICION)
+            return Results.BadRequest("La instalación de destino debe ser de exhibición.");
+
+        // Compatibilidad criatura ↔ instalación destino (Sección 3.4 del PDF).
+        if (criatura.Habitat != destino.Medio)
+            return Results.BadRequest(
+                $"Medio incompatible: la criatura es de medio {criatura.Habitat} y la instalación destino es de medio {destino.Medio}.");
+
+        if (criatura.Dieta != destino.Alimentacion)
+            return Results.BadRequest(
+                $"Alimentación incompatible: la criatura es {criatura.Dieta} y la instalación destino es {destino.Alimentacion}.");
+
         if (criatura.EdadActual < criatura.EdadAdulta)
             return Results.BadRequest("La criatura no es adulta todavía.");
 
@@ -381,6 +430,48 @@ app.MapPost("/simulacion/iniciar-partida", async (string nombreJugador, string n
     finally { _simLock.Release(); }
 });
 
+// Descarte voluntario de una criatura (Sección 3.6 del PDF: coste fijo 20.000
+// solaris). Se aplica a criaturas vivas que el jugador decide eliminar de
+// forma manual (el descarte automático por letargo ya ocurre en la ronda).
+app.MapPost("/simulacion/descartar-criatura", async (string criaturaId, IHttpClientFactory clientFactory) =>
+{
+    await _simLock.WaitAsync();
+    try
+    {
+        const int COSTE_DESCARTE = 20000;
+
+        // Buscar la criatura en cualquier instalación del juego.
+        Instalacion? contenedora = null;
+        Criatura? criatura = null;
+        foreach (var enclave in partidaActual.Enclaves)
+        {
+            foreach (var inst in enclave.Instalaciones)
+            {
+                var c = inst.Criaturas.FirstOrDefault(x => x.Id == criaturaId);
+                if (c != null) { contenedora = inst; criatura = c; break; }
+            }
+            if (criatura != null) break;
+        }
+
+        if (criatura == null || contenedora == null)
+            return Results.NotFound("Criatura no encontrada.");
+
+        if (partidaActual.Solaris < COSTE_DESCARTE)
+            return Results.BadRequest($"Solaris insuficientes para descarte. Requeridos: {COSTE_DESCARTE}.");
+
+        partidaActual.Solaris -= COSTE_DESCARTE;
+        contenedora.Criaturas.Remove(criatura);
+        partidaActual.RegistroEventos.Add(
+            $"DESCARTE VOLUNTARIO: {criatura.Nombre} transferida a Bene Tleilax. Coste: {COSTE_DESCARTE} Solaris.");
+
+        var client = clientFactory.CreateClient();
+        await client.PostAsJsonAsync("http://localhost:5032/persistir/guardar", partidaActual);
+
+        return Results.Ok(new { mensaje = "Criatura descartada.", solarisRestantes = partidaActual.Solaris });
+    }
+    finally { _simLock.Release(); }
+});
+
 app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion, string enclaveId, IHttpClientFactory clientFactory) =>
 {
     await _simLock.WaitAsync();
@@ -394,17 +485,16 @@ app.MapPost("/simulacion/construir-instalacion", async (string codigoInstalacion
         // Cada instalación nace con SuministrosIniciales según la tabla.
         Instalacion? nueva = codigoInstalacion switch
         {
-            "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
-            "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
-            "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
-            "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
-            "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
-            "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
-            "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
-            "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
+            "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)",      Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 1000,  Hectareas = 10,  CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
+            "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500,  Hectareas = 50,  CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
+            "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000,  Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
+            "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)",    Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 3500,  Hectareas = 25,  CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
+            "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)",        Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
+            "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
+            "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)",      Tipo = TipoActividad.EXHIBICION,   Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
             _ => null
         };
-
 
         if (nueva == null)
             return Results.BadRequest($"Código de instalación desconocido: {codigoInstalacion}");
