@@ -59,3 +59,5 @@ C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.pdb
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\Dune.SimulationService.genruntimeconfig.cache
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\obj\Debug\net8.0\ref\Dune.SimulationService.dll
+C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\MediatR.dll
+C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.SimulationService\bin\Debug\net8.0\MediatR.Contracts.dll

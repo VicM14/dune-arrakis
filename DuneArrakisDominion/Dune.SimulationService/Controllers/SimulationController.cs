@@ -1,6 +1,8 @@
 using Dune.Domain;
 using Dune.Domain.Exceptions;
+using Dune.SimulationService.Events;
 using Dune.SimulationService.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dune.SimulationService.Controllers;
@@ -17,6 +19,7 @@ public class SimulationController : ControllerBase
 {
     private readonly SimulationState _state;
     private readonly IPersistenceClient _persistence;
+    private readonly IPublisher _publisher;
     private readonly ILogger<SimulationController> _logger;
 
     private static readonly Random _rng = new();
@@ -27,10 +30,12 @@ public class SimulationController : ControllerBase
     public SimulationController(
         SimulationState state,
         IPersistenceClient persistence,
+        IPublisher publisher,
         ILogger<SimulationController> logger)
     {
         _state = state;
         _persistence = persistence;
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -137,6 +142,7 @@ public class SimulationController : ControllerBase
             partida.RegistroEventos.Add($"--- INICIO MES {partida.MesActual} ---");
 
             double ingresosTotales = 0;
+            int descartadasEsteMes = 0;
 
             foreach (var enclave in partida.Enclaves)
             {
@@ -187,6 +193,7 @@ public class SimulationController : ControllerBase
                         if (criatura.EnLetargo)
                         {
                             partida.Solaris -= COSTE_DESCARTE_BENE_TLEILAX;
+                            descartadasEsteMes++;
                             partida.RegistroEventos.Add(
                                 $"DESCARTE: {criatura.Nombre} transferida a Bene Tleilax. Coste: {COSTE_DESCARTE_BENE_TLEILAX} Solaris.");
                         }
@@ -222,7 +229,24 @@ public class SimulationController : ControllerBase
             partida.RegistroEventos.Add(
                 $"Finanzas mes {partida.MesActual}: +{ingresosTotales:F2} ingresos por donaciones.");
 
-            await _persistence.GuardarPartidaAsync(partida, cancellationToken);
+            // Publicar el evento de fin de mes. Los handlers suscritos
+            // (EventLogHandler, AutoPersistenceHandler, y los que se añadan
+            // en el futuro) reaccionarán EN PARALELO sin que este controller
+            // necesite conocerlos — patrón publish/subscribe (Sección 2.2 del PDF).
+            int criaturasVivas = partida.Enclaves
+                .SelectMany(e => e.Instalaciones)
+                .SelectMany(i => i.Criaturas)
+                .Count(c => c.Salud > 0);
+
+            await _publisher.Publish(new SimulationMonthEndedEvent
+            {
+                MesCompletado = partida.MesActual,
+                IngresosMes = ingresosTotales,
+                CriaturasVivas = criaturasVivas,
+                CriaturasDescartadas = descartadasEsteMes,
+                SolarisAlFinalizar = partida.Solaris
+            }, cancellationToken);
+
             return Ok(partida);
         }
         finally { _state.Lock.Release(); }
