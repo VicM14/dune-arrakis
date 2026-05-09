@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Dune.PersistenceService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d10872a2a0f0266a17bbbdeef27a8119d5c7bc5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+007dd967fac470e427d2acd42e0af8524fb86e6b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Dune.PersistenceService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Dune.PersistenceService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
