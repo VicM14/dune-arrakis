@@ -5,7 +5,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<SimulationState>();
-builder.Services.AddHttpClient<IPersistenceClient, PersistenceClient>();
+builder.Services.AddHttpClient<IPersistenceClient, PersistenceClient>()
+    .AddStandardResilienceHandler(options =>
+    {
+        // Reintenta hasta 3 veces con backoff exponencial si el PersistenceService
+        // no responde o devuelve 5xx. Cubre fallos parciales en sistemas distribuidos
+        // (Sección 3.9 del PDF: "políticas de reintento, indisponibilidad temporal").
+        options.Retry.MaxRetryAttempts = 3;
+        options.Retry.Delay = TimeSpan.FromSeconds(1);
+        options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(10);
+    });
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
