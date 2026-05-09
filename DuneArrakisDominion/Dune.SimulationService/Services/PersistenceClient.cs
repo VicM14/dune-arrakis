@@ -20,20 +20,21 @@ public class PersistenceClient : IPersistenceClient
 {
     private readonly HttpClient _http;
     private readonly ILogger<PersistenceClient> _logger;
-    private const string GuardarUrl = "http://localhost:5032/persistir/guardar";
-    private const string CargarUrl  = "http://localhost:5032/persistir/cargar";
+    private readonly string _baseUrl;
 
-    public PersistenceClient(HttpClient http, ILogger<PersistenceClient> logger)
+    public PersistenceClient(HttpClient http, ILogger<PersistenceClient> logger, IConfiguration config)
     {
         _http = http;
         _logger = logger;
+        _baseUrl = config["Services:PersistenceServiceUrl"]
+            ?? throw new InvalidOperationException("Falta la clave de configuración Services:PersistenceServiceUrl.");
     }
 
     public async Task<bool> GuardarPartidaAsync(Partida partida, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _http.PostAsJsonAsync(GuardarUrl, partida, cancellationToken);
+            var response = await _http.PostAsJsonAsync($"{_baseUrl}/persistir/guardar", partida, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Persistencia devolvió código {Code}", response.StatusCode);
@@ -57,7 +58,7 @@ public class PersistenceClient : IPersistenceClient
     {
         try
         {
-            var response = await _http.GetAsync(CargarUrl, cancellationToken);
+            var response = await _http.GetAsync($"{_baseUrl}/persistir/cargar", cancellationToken);
             if (!response.IsSuccessStatusCode) return null;
             return await response.Content.ReadFromJsonAsync<Partida>(cancellationToken: cancellationToken);
         }

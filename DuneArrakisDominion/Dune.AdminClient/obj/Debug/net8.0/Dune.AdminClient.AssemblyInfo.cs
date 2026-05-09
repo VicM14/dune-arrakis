@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Dune.AdminClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b02093b9653034bdb1fbc6946255adeb6ffad265")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e812b67dc1a95b7bbf3a7be2b3132c3a5e9b12c1")]
 [assembly: System.Reflection.AssemblyProductAttribute("Dune.AdminClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Dune.AdminClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
