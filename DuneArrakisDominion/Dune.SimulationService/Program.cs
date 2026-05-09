@@ -2,29 +2,15 @@ using Dune.SimulationService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SERVICIOS (Dependency Injection)
-// ─────────────────────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
-
-// Estado de la simulación: Singleton (una sola partida activa por proceso).
 builder.Services.AddSingleton<SimulationState>();
-
-// Cliente del servicio de persistencia: registrado como HttpClient tipado.
 builder.Services.AddHttpClient<IPersistenceClient, PersistenceClient>();
-
-// MediatR: registro automático de todos los handlers del assembly.
-// TaskWhenAllPublisher ejecuta todos los INotificationHandler en PARALELO
-// cuando se publica un evento, sin que el publicador conozca a los suscriptores.
-// Esto implementa el patrón publish/subscribe in-process (Sección 2.2 del PDF).
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
     cfg.NotificationPublisherType = typeof(MediatR.NotificationPublishers.TaskWhenAllPublisher);
 });
-
-// CORS para Unity y cualquier frontend.
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowUnity",
         policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
@@ -32,9 +18,33 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MIDDLEWARE
+// BOOTSTRAP — recuperar la partida guardada al arrancar (Sección 2.5 del PDF:
+// sincronización de estado entre servicios distribuidos).
+// Si el PersistenceService no está disponible o no hay partida, se continúa
+// con una partida vacía — tolerancia a fallos parciales.
 // ─────────────────────────────────────────────────────────────────────────────
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+try
+{
+    var persistenceClient = app.Services.GetRequiredService<IPersistenceClient>();
+    var state = app.Services.GetRequiredService<SimulationState>();
+    var partida = await persistenceClient.CargarPartidaAsync();
+    if (partida != null)
+    {
+        state.PartidaActual = partida;
+        logger.LogInformation("[BOOTSTRAP] Partida cargada: {Nombre}, mes {Mes}.",
+            partida.NombreJugador, partida.MesActual);
+    }
+    else
+    {
+        logger.LogInformation("[BOOTSTRAP] Sin partida guardada — iniciando estado vacío.");
+    }
+}
+catch (Exception ex)
+{
+    logger.LogWarning(ex, "[BOOTSTRAP] Fallo al conectar con PersistenceService — estado vacío.");
+}
+
 app.UseCors("AllowUnity");
 app.MapControllers();
-
 app.Run();
