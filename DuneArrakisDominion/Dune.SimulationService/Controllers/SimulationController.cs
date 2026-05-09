@@ -4,6 +4,8 @@ using Dune.SimulationService.Events;
 using Dune.SimulationService.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Dune.SimulationService.Controllers;
 
@@ -126,6 +128,22 @@ public class SimulationController : ControllerBase
         }
         finally { _state.Lock.Release(); }
     }
+    [HttpPost("/simulacion/cargar-partida")]
+    public async Task<IActionResult> CargarPartida(CancellationToken cancellationToken)
+    {
+        await _state.Lock.WaitAsync(cancellationToken);
+        try
+        {
+            var partida = await _persistence.CargarPartidaAsync(cancellationToken);
+            if (partida == null)
+                return NotFound("No hay partida guardada en el servicio de persistencia.");
+
+            _state.PartidaActual = partida;
+            return Ok(_state.PartidaActual);
+        }
+        finally { _state.Lock.Release(); }
+    }
+
 
     // ─────────────────────────────────────────────────────────────────────
     // RONDA MENSUAL
