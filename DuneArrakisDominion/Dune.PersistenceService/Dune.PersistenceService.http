@@ -1,0 +1,6 @@
+@Dune.PersistenceService_HostAddress = http://localhost:5032
+
+GET {{Dune.PersistenceService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
