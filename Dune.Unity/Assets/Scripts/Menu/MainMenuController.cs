@@ -9,11 +9,12 @@ public class MainMenuController : MonoBehaviour
     public TextMeshProUGUI errorText;
     public Button btnCargar;
 
+    private bool esperandoCarga = false;
+
     void Start()
     {
         if (errorText != null) errorText.text = "";
 
-        // Asegurarse de que GameManager existe en la escena
         if (GameManager.Instance == null)
         {
             var go = new GameObject("GameManager");
@@ -21,13 +22,13 @@ public class MainMenuController : MonoBehaviour
         }
 
         GameManager.OnError += MostrarError;
-        GameManager.OnEstadoActualizado += OnPartidaCargada;
+        GameManager.OnEstadoActualizado += OnEstadoRecibido;
     }
 
     void OnDestroy()
     {
         GameManager.OnError -= MostrarError;
-        GameManager.OnEstadoActualizado -= OnPartidaCargada;
+        GameManager.OnEstadoActualizado -= OnEstadoRecibido;
     }
 
     public void OnNuevaPartidaClick()
@@ -37,18 +38,23 @@ public class MainMenuController : MonoBehaviour
 
     public void OnCargarPartidaClick()
     {
+        esperandoCarga = true;
         if (errorText != null) errorText.text = "Conectando...";
         if (btnCargar != null) btnCargar.interactable = false;
         GameManager.Instance.CargarPartidaGuardada();
     }
 
-    private void OnPartidaCargada(PartidaData partida)
+    private void OnEstadoRecibido(PartidaData partida)
     {
+        // Solo navegar si el usuario hizo click en Cargar explícitamente
+        if (!esperandoCarga) return;
+        esperandoCarga = false;
         SceneManager.LoadScene("GameView");
     }
 
     private void MostrarError(string msg)
     {
+        esperandoCarga = false;
         if (errorText != null) errorText.text = msg;
         if (btnCargar != null) btnCargar.interactable = true;
     }

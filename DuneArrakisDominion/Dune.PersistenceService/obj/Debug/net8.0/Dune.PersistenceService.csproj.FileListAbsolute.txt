@@ -30,7 +30,6 @@ C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\refint\Dune.PersistenceService.dll
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\appsettings.json
-C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\partida_arrakis.json
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.staticwebassets.endpoints.json
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.exe
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.deps.json
@@ -55,9 +54,9 @@ C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.Per.C87A15C9.Up2Date
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.pdb
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.genruntimeconfig.cache
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\ref\Dune.PersistenceService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\partida_arrakis.json
+C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\partida_arrakis.json
