@@ -45,15 +45,15 @@ public class ScenarioSelectController : MonoBehaviour
         {
             nombreApi        = "Arrakeen",
             nombreDisplay    = "ARRAKEEN: DOMINIO DE LA ESPECIA",
-            descripcion      = "Arrakis, planeta desértico.\nOperación prestigiosa y altamente rentable.",
+            descripcion      = "Arrakis, planeta desertico.\nOperacion prestigiosa y altamente rentable.",
             solaris          = "100.000 ?",
             nivelAdquisitivo = "ALTO"
         },
         new DatosEscenario
         {
             nombreApi        = "GiediPrime",
-            nombreDisplay    = "GIEDI PRIME: GALERÍA INDUSTRIAL",
-            descripcion      = "Alta afluencia y baja exclusividad.\nEstética industrial Harkonnen.",
+            nombreDisplay    = "GIEDI PRIME: GALERIA INDUSTRIAL",
+            descripcion      = "Alta afluencia y baja exclusividad.\nEstetica industrial Harkonnen.",
             solaris          = "50.000 ?",
             nivelAdquisitivo = "BAJO"
         },
@@ -61,7 +61,7 @@ public class ScenarioSelectController : MonoBehaviour
         {
             nombreApi        = "Caladan",
             nombreDisplay    = "CALADAN: RESERVA DUCAL",
-            descripcion      = "Mundo oceánico de Casa Atreides.\nMejores condiciones logísticas.",
+            descripcion      = "Mundo oceánico de Casa Atreides.\nMejores condiciones logisticas.",
             solaris          = "150.000 ?",
             nivelAdquisitivo = "MEDIO"
         }
