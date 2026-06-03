@@ -45,13 +45,12 @@ public class GameManager : MonoBehaviour
     {
         return JsonConvert.DeserializeObject<PartidaData>(json);
     }
-
     private void HandleSuccess(string json)
     {
         PartidaActual = ParsePartida(json);
+        Debug.Log($"[GameManager] Estado recibido — Jugador: {PartidaActual?.NombreJugador} | Mes: {PartidaActual?.MesActual} | Solaris: {PartidaActual?.Solaris}");
         OnEstadoActualizado?.Invoke(PartidaActual);
     }
-
     private void HandleError(string context, string raw)
     {
         // Intentar parsear mensaje de error del backend
@@ -225,5 +224,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("Partida guardada.");
         else
             HandleError("GuardarPartida", req.downloadHandler.text);
+    }
+    void Start()
+    {
+        Debug.Log("[GameManager] Arrancando — intentando conectar con el backend...");
+        ObtenerEstado();
     }
 }

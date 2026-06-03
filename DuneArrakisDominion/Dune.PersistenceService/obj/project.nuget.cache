@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "Qk03LWElnBA=",
+  "dgSpecHash": "0tpyETIKOhY=",
   "success": true,
-  "projectFilePath": "C:\\Documentos\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.PersistenceService\\Dune.PersistenceService.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\victoria.madriznieve\\Documents\\GitHub\\dune-arrakis\\DuneArrakisDominion\\Dune.PersistenceService\\Dune.PersistenceService.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\victoria.madriznieve\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.27\\microsoft.netcore.app.host.win-x64.8.0.27.nupkg.sha512"
+  ],
   "logs": []
 }
