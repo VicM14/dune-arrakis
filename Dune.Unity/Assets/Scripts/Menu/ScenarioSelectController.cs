@@ -61,7 +61,7 @@ public class ScenarioSelectController : MonoBehaviour
         {
             nombreApi        = "Caladan",
             nombreDisplay    = "CALADAN: RESERVA DUCAL",
-            descripcion      = "Mundo oceánico de Casa Atreides.\nMejores condiciones logisticas.",
+            descripcion      = "Mundo oceanico de Casa Atreides.\nMejores condiciones logisticas.",
             solaris          = "150.000 ?",
             nivelAdquisitivo = "MEDIO"
         }
