@@ -60,3 +60,37 @@ C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\ref\Dune.PersistenceService.dll
 C:\Documentos\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\partida_arrakis.json
 C:\Users\victoria.madriznieve\Documents\GitHub\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\partida_arrakis.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\appsettings.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.staticwebassets.endpoints.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.exe
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.deps.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.runtimeconfig.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.dll
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.PersistenceService.pdb
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.Domain.dll
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\bin\Debug\net8.0\Dune.Domain.pdb
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.csproj.AssemblyReference.cache
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.AssemblyInfoInputs.cache
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.AssemblyInfo.cs
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.csproj.CoreCompileInputs.cache
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.sourcelink.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\scopedcss\bundle\Dune.PersistenceService.styles.css
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets\msbuild.Dune.PersistenceService.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets\msbuild.Dune.PersistenceService.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets\msbuild.build.Dune.PersistenceService.props
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Dune.PersistenceService.props
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Dune.PersistenceService.props
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.Per.C87A15C9.Up2Date
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.dll
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\refint\Dune.PersistenceService.dll
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.pdb
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\Dune.PersistenceService.genruntimeconfig.cache
+C:\Users\karin\Documents\UNIVERSIDAD\entornos\Nueva carpeta\dune-arrakis\DuneArrakisDominion\Dune.PersistenceService\obj\Debug\net8.0\ref\Dune.PersistenceService.dll

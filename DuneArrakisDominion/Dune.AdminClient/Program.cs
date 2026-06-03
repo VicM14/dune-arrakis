@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using Dune.Domain;
+using Dune.Domain.DTOs;
 
 Console.WriteLine("--- DUNE: IMPERIAL COMMAND CONSOLE ---");
 
@@ -20,7 +21,10 @@ while (!salir)
     Console.WriteLine("[6] Ver Estado Detallado");
     Console.WriteLine("[7] Trasladar Criatura (aclimatación → exhibición)");
     Console.WriteLine("[8] Descartar Criatura (Bene Tleilax, 20.000 solaris)");
-    Console.WriteLine("[S] Salir");
+    Console.WriteLine("[L] Listar Partidas Guardadas");
+    Console.WriteLine("[C] Cargar Partida");
+    Console.WriteLine("[G] Guardar Partida");
+    Console.WriteLine("[S] Salir (guarda automáticamente)");
     Console.WriteLine("========================================");
     Console.Write("Selecciona una opción: ");
 
@@ -36,7 +40,13 @@ while (!salir)
         case "6": await VerEstado(client); break;
         case "7": await TrasladarCriatura(client); break;
         case "8": await DescartarCriatura(client); break;
-        case "S": salir = true; break;
+        case "L": await ListarPartidas(client); break;
+        case "C": await CargarPartida(client); break;
+        case "G": await GuardarPartida(client); break;
+        case "S":
+            await GuardarAlSalir(client);
+            salir = true;
+            break;
     }
 }
 
@@ -218,6 +228,7 @@ async Task VerEstado(HttpClient client)
 {
     var p = await client.GetFromJsonAsync<Partida>($"{SimUrl}/estado-inicial");
     Console.WriteLine($"\n--- ESTADO DEL DOMINIO ---");
+    Console.WriteLine($"Partida: {p?.IdPartida}");
     Console.WriteLine($"Jugador: {p?.NombreJugador} | Mes: {p?.MesActual} | Solaris: {p?.Solaris:F2}");
     Console.WriteLine($"Escenario: {p?.Escenario?.Nombre ?? "-"}");
 
@@ -236,6 +247,22 @@ async Task VerEstado(HttpClient client)
             foreach (var c in i.Criaturas.OrderByDescending(c => c.Salud))
                 Console.WriteLine($"      - {c.Nombre} | Salud: {c.Salud:F0} | Edad: {c.EdadActual}/{c.EdadAdulta}");
         }
+    }
+
+    // Registro de eventos en orden cronológico (Sección 3.8 del PDF: el centro
+    // de mando debe mostrar los eventos cronológicamente).
+    var eventos = p?.RegistroEventos ?? new();
+    Console.WriteLine($"\n--- REGISTRO DE EVENTOS ({eventos.Count}) ---");
+    if (eventos.Count == 0)
+    {
+        Console.WriteLine("  (sin eventos)");
+    }
+    else
+    {
+        int desde = Math.Max(0, eventos.Count - 20);
+        if (desde > 0) Console.WriteLine($"  ... ({desde} eventos anteriores omitidos)");
+        for (int i = desde; i < eventos.Count; i++)
+            Console.WriteLine($"  [{i + 1}] {eventos[i]}");
     }
 }
 
@@ -347,4 +374,112 @@ async Task DescartarCriatura(HttpClient client)
         Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
     else
         Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+}
+
+async Task ListarPartidas(HttpClient client)
+{
+    try
+    {
+        var lista = await client.GetFromJsonAsync<List<PartidaResumenDTO>>($"{SimUrl}/simulacion/listar-partidas");
+        if (lista == null || lista.Count == 0)
+        {
+            Console.WriteLine(">> No hay partidas guardadas.");
+            return;
+        }
+        Console.WriteLine("\n--- PARTIDAS GUARDADAS ---");
+        for (int i = 0; i < lista.Count; i++)
+        {
+            var r = lista[i];
+            Console.WriteLine($"  [{i + 1}] {r.NombreJugador} | {r.EscenarioNombre} | Mes {r.MesActual} | {r.Solaris:F0} solaris");
+            Console.WriteLine($"      id: {r.IdPartida} | guardada: {r.FechaModificacion.ToLocalTime():g}");
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        Console.WriteLine($">> No se pudo contactar con el SimulationService: {ex.Message}");
+    }
+}
+
+async Task CargarPartida(HttpClient client)
+{
+    List<PartidaResumenDTO>? lista;
+    try
+    {
+        lista = await client.GetFromJsonAsync<List<PartidaResumenDTO>>($"{SimUrl}/simulacion/listar-partidas");
+    }
+    catch (HttpRequestException ex)
+    {
+        Console.WriteLine($">> No se pudo contactar con el SimulationService: {ex.Message}");
+        return;
+    }
+
+    if (lista == null || lista.Count == 0)
+    {
+        Console.WriteLine(">> No hay partidas guardadas para cargar.");
+        return;
+    }
+
+    Console.WriteLine("Partidas disponibles:");
+    for (int i = 0; i < lista.Count; i++)
+    {
+        var r = lista[i];
+        Console.WriteLine($"  [{i + 1}] {r.NombreJugador} | {r.EscenarioNombre} | Mes {r.MesActual} | guardada {r.FechaModificacion.ToLocalTime():g}");
+    }
+    Console.Write("Selecciona partida (número, o Enter para la más reciente): ");
+    string entrada = Console.ReadLine()?.Trim() ?? "";
+
+    string url = $"{SimUrl}/simulacion/cargar-partida";
+    if (!string.IsNullOrEmpty(entrada))
+    {
+        if (!int.TryParse(entrada, out int idx) || idx < 1 || idx > lista.Count)
+        {
+            Console.WriteLine(">> Selección inválida.");
+            return;
+        }
+        url += $"?id={Uri.EscapeDataString(lista[idx - 1].IdPartida)}";
+    }
+
+    var response = await client.PostAsync(url, null);
+    if (response.IsSuccessStatusCode)
+    {
+        var p = await response.Content.ReadFromJsonAsync<Partida>();
+        Console.WriteLine($">> Partida cargada: {p?.NombreJugador}, mes {p?.MesActual}, {p?.Solaris:F2} solaris.");
+    }
+    else
+    {
+        Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+    }
+}
+
+async Task GuardarPartida(HttpClient client)
+{
+    try
+    {
+        var response = await client.PostAsync($"{SimUrl}/simulacion/guardar", null);
+        if (response.IsSuccessStatusCode)
+            Console.WriteLine($">> {await response.Content.ReadAsStringAsync()}");
+        else
+            Console.WriteLine($">> Error: {await response.Content.ReadAsStringAsync()}");
+    }
+    catch (HttpRequestException ex)
+    {
+        Console.WriteLine($">> No se pudo guardar (servicio no disponible): {ex.Message}");
+    }
+}
+
+async Task GuardarAlSalir(HttpClient client)
+{
+    Console.WriteLine(">> Guardando partida antes de salir...");
+    try
+    {
+        var response = await client.PostAsync($"{SimUrl}/simulacion/guardar", null);
+        if (response.IsSuccessStatusCode)
+            Console.WriteLine(">> Estado guardado. Hasta pronto.");
+        else
+            Console.WriteLine(">> No había partida activa que guardar. Saliendo.");
+    }
+    catch (HttpRequestException)
+    {
+        Console.WriteLine(">> No se pudo guardar (servicio no disponible). Saliendo igualmente.");
+    }
 }

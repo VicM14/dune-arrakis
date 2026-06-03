@@ -1,96 +1,144 @@
 [
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__2",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "EstadoInicial",
     "RelativePath": "estado-inicial",
     "HttpMethod": "GET",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
+        "Type": "Dune.Domain.Partida",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 200
       }
     ]
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__5",
-    "RelativePath": "simulacion/comprar-recursos",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "EstadoResumen",
+    "RelativePath": "estado-resumen",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Dune.Domain.DTOs.PartidaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "CargarPartida",
+    "RelativePath": "simulacion/cargar-partida",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "agua",
-        "Type": "System.Double",
-        "IsRequired": true
-      },
-      {
-        "Name": "especia",
-        "Type": "System.Double",
-        "IsRequired": true
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__8",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "ComprarSuministros",
+    "RelativePath": "simulacion/comprar-suministros",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "enclaveId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cantidad",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "ConstruirInstalacion",
     "RelativePath": "simulacion/construir-instalacion",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "codigoInstalacion",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       },
       {
         "Name": "enclaveId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "DescartarCriatura",
+    "RelativePath": "simulacion/descartar-criatura",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "criaturaId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "EjecutarRonda",
     "RelativePath": "simulacion/ejecutar-ronda",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__3",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "Guardar",
+    "RelativePath": "simulacion/guardar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "GuardarActual",
     "RelativePath": "simulacion/guardar-actual",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [
       {
@@ -99,71 +147,99 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__7",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "IniciarPartida",
     "RelativePath": "simulacion/iniciar-partida",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "nombreJugador",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       },
       {
         "Name": "nombreEscenario",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "ListarPartidas",
+    "RelativePath": "simulacion/listar-partidas",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
+        "Type": "System.Collections.Generic.List\u00601[[Dune.Domain.DTOs.PartidaResumenDTO, Dune.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 200
       }
     ]
   },
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__6",
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "MoverSuministros",
+    "RelativePath": "simulacion/mover-suministros",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "enclaveId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "instalacionId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cantidad",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Dune.SimulationService.Controllers.SimulationController",
+    "Method": "TrasladarCriatura",
     "RelativePath": "simulacion/trasladar-criatura",
     "HttpMethod": "POST",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "criaturaId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       },
       {
         "Name": "instalacionOrigenId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       },
       {
         "Name": "instalacionDestinoId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   }
 ]
