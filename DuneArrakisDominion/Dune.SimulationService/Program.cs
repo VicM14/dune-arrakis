@@ -37,7 +37,7 @@ try
 {
     var persistenceClient = app.Services.GetRequiredService<IPersistenceClient>();
     var state = app.Services.GetRequiredService<SimulationState>();
-    var partida = await persistenceClient.CargarPartidaAsync();
+    var partida = await persistenceClient.CargarUltimaAsync();
     if (partida != null)
     {
         state.PartidaActual = partida;

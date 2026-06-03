@@ -1,4 +1,5 @@
 using Dune.Domain;
+using Dune.Domain.DTOs;
 using Dune.Domain.Exceptions;
 using Dune.SimulationService.Events;
 using Dune.SimulationService.Services;
@@ -48,6 +49,14 @@ public class SimulationController : ControllerBase
     [HttpGet("/estado-inicial")]
     public ActionResult<Partida> EstadoInicial() => Ok(_state.PartidaActual);
 
+    /// <summary>
+    /// Estado resumido de la partida activa como contrato de salida (DTO).
+    /// Desacopla la vista del cliente del modelo de dominio interno.
+    /// </summary>
+    [HttpGet("/estado-resumen")]
+    public ActionResult<PartidaDTO> EstadoResumen()
+        => Ok(PartidaDTO.DesdeDominio(_state.PartidaActual));
+
     // ─────────────────────────────────────────────────────────────────────
     // GESTIÓN DE PARTIDA
     // ─────────────────────────────────────────────────────────────────────
@@ -82,21 +91,33 @@ public class SimulationController : ControllerBase
             {
                 "Arrakeen" => new Enclave
                 {
-                    Nombre = "Arrakeen", Hectareas = 7700, Suministros = 10000,
-                    TipoEnclave = TipoActividad.EXHIBICION, NivelAdquisitivo = NivelAdquisitivo.ALTO,
-                    VisitantesMensualesBase = 1000, PoblacionVisitantes = 1000
+                    Nombre = "Arrakeen",
+                    Hectareas = 7700,
+                    Suministros = 10000,
+                    TipoEnclave = TipoActividad.EXHIBICION,
+                    NivelAdquisitivo = NivelAdquisitivo.ALTO,
+                    VisitantesMensualesBase = 1000,
+                    PoblacionVisitantes = 1000
                 },
                 "GiediPrime" => new Enclave
                 {
-                    Nombre = "Giedi Prime", Hectareas = 100, Suministros = 5000,
-                    TipoEnclave = TipoActividad.EXHIBICION, NivelAdquisitivo = NivelAdquisitivo.BAJO,
-                    VisitantesMensualesBase = 2000, PoblacionVisitantes = 2000
+                    Nombre = "Giedi Prime",
+                    Hectareas = 100,
+                    Suministros = 5000,
+                    TipoEnclave = TipoActividad.EXHIBICION,
+                    NivelAdquisitivo = NivelAdquisitivo.BAJO,
+                    VisitantesMensualesBase = 2000,
+                    PoblacionVisitantes = 2000
                 },
                 _ => new Enclave
                 {
-                    Nombre = "Caladan", Hectareas = 10000, Suministros = 25000,
-                    TipoEnclave = TipoActividad.EXHIBICION, NivelAdquisitivo = NivelAdquisitivo.MEDIO,
-                    VisitantesMensualesBase = 3000, PoblacionVisitantes = 3000
+                    Nombre = "Caladan",
+                    Hectareas = 10000,
+                    Suministros = 25000,
+                    TipoEnclave = TipoActividad.EXHIBICION,
+                    NivelAdquisitivo = NivelAdquisitivo.MEDIO,
+                    VisitantesMensualesBase = 3000,
+                    PoblacionVisitantes = 3000
                 }
             };
 
@@ -128,21 +149,59 @@ public class SimulationController : ControllerBase
         }
         finally { _state.Lock.Release(); }
     }
-    [HttpPost("/simulacion/cargar-partida")]
-    public async Task<IActionResult> CargarPartida(CancellationToken cancellationToken)
+    /// <summary>
+    /// Guarda bajo demanda el estado actual de la partida en el servicio de
+    /// persistencia (Sección 3.10 del PDF: "guardar cuando el usuario lo
+    /// solicite y, en todo caso, al salir").
+    /// </summary>
+    [HttpPost("/simulacion/guardar")]
+    public async Task<IActionResult> Guardar(CancellationToken cancellationToken)
     {
         await _state.Lock.WaitAsync(cancellationToken);
         try
         {
-            var partida = await _persistence.CargarPartidaAsync(cancellationToken);
+            if (_state.PartidaActual.Enclaves.Count == 0)
+                return BadRequest(new { error = "No hay ninguna partida activa que guardar." });
+
+            bool ok = await _persistence.GuardarPartidaAsync(_state.PartidaActual, cancellationToken);
+            return ok
+                ? Ok(new { mensaje = "Partida guardada.", id = _state.PartidaActual.IdPartida })
+                : StatusCode(503, new { error = "El servicio de persistencia no está disponible." });
+        }
+        finally { _state.Lock.Release(); }
+    }
+
+    /// <summary>
+    /// Carga una partida. Si se indica id, carga esa; si no, la más reciente.
+    /// </summary>
+    [HttpPost("/simulacion/cargar-partida")]
+    public async Task<IActionResult> CargarPartida(
+        [FromQuery] string? id,
+        CancellationToken cancellationToken)
+    {
+        await _state.Lock.WaitAsync(cancellationToken);
+        try
+        {
+            var partida = string.IsNullOrWhiteSpace(id)
+                ? await _persistence.CargarUltimaAsync(cancellationToken)
+                : await _persistence.CargarPorIdAsync(id, cancellationToken);
+
             if (partida == null)
-                return NotFound("No hay partida guardada en el servicio de persistencia.");
+                return NotFound("No se encontró la partida solicitada en el servicio de persistencia.");
 
             _state.PartidaActual = partida;
             return Ok(_state.PartidaActual);
         }
         finally { _state.Lock.Release(); }
     }
+
+    /// <summary>
+    /// Lista las partidas guardadas (resúmenes), de más reciente a más antigua,
+    /// para que el cliente pueda elegir cuál reanudar.
+    /// </summary>
+    [HttpGet("/simulacion/listar-partidas")]
+    public async Task<ActionResult<List<PartidaResumenDTO>>> ListarPartidas(CancellationToken cancellationToken)
+        => Ok(await _persistence.ListarPartidasAsync(cancellationToken));
 
 
     // ─────────────────────────────────────────────────────────────────────
@@ -485,14 +544,14 @@ public class SimulationController : ControllerBase
 
             Instalacion? nueva = codigoInstalacion switch
             {
-                "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)",      Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 1000,  Hectareas = 10,  CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
-                "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500,  Hectareas = 50,  CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
-                "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)",   Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000,  Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
-                "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)",    Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 3500,  Hectareas = 25,  CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
-                "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)",        Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA,    CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
-                "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.DESIERTO,     Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
-                "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)",     Tipo = TipoActividad.EXHIBICION,   Medio = Medio.AEREO,        Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0,   Suministros = 0   },
-                "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)",      Tipo = TipoActividad.EXHIBICION,   Medio = Medio.SUBTERRANEO,  Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO,  CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0,   Suministros = 0   },
+                "ADR05" => new Instalacion { Codigo = "ADR05", Nombre = "Roca Sellada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 1000, Hectareas = 10, CapacidadMaxima = 5, SuministrosIniciales = 200, Suministros = 200 },
+                "ADP03" => new Instalacion { Codigo = "ADP03", Nombre = "Escudo Estático (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 2500, Hectareas = 50, CapacidadMaxima = 3, SuministrosIniciales = 300, Suministros = 300 },
+                "AAV02" => new Instalacion { Codigo = "AAV02", Nombre = "Cúpula Blindada (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 5000, Hectareas = 100, CapacidadMaxima = 2, SuministrosIniciales = 500, Suministros = 500 },
+                "ASU04" => new Instalacion { Codigo = "ASU04", Nombre = "Pozo Reforzado (Aclimatación)", Tipo = TipoActividad.ACLIMATACION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 3500, Hectareas = 25, CapacidadMaxima = 4, SuministrosIniciales = 100, Suministros = 100 },
+                "EDR02" => new Instalacion { Codigo = "EDR02", Nombre = "Roca Sellada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.RECOLECTOR, TipoRecinto = TipoRecinto.ROCA_SELLADA, CosteConstruccion = 21000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
+                "EDP03" => new Instalacion { Codigo = "EDP03", Nombre = "Escudo Estático (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.DESIERTO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.ESCUDO_ESTATICO, CosteConstruccion = 12500, Hectareas = 300, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
+                "EAV02" => new Instalacion { Codigo = "EAV02", Nombre = "Cúpula Blindada (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.AEREO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.CUPULA_BLINDADA, CosteConstruccion = 15000, Hectareas = 200, CapacidadMaxima = 2, SuministrosIniciales = 0, Suministros = 0 },
+                "ESU03" => new Instalacion { Codigo = "ESU03", Nombre = "Pozo Reforzado (Exhibición)", Tipo = TipoActividad.EXHIBICION, Medio = Medio.SUBTERRANEO, Alimentacion = Alimentacion.DEPREDADOR, TipoRecinto = TipoRecinto.POZO_REFORZADO, CosteConstruccion = 25000, Hectareas = 400, CapacidadMaxima = 3, SuministrosIniciales = 0, Suministros = 0 },
                 _ => null
             };
 
