@@ -1,0 +1,41 @@
+{
+  "IdPartida": "2dfcccc0-d7a1-4b33-b818-907a3c5c9fe5",
+  "NombreJugador": "uchala",
+  "MesActual": 1,
+  "Solaris": 100000,
+  "Enclaves": [
+    {
+      "Id": "4c0cbdfe-bb4b-40b8-a4c5-0936d3df43aa",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 100,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "744d2ec2-673f-4b85-8ff8-85eccc57b6d6",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 1000,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: uchala."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T15:09:03.0830343Z"
+}
