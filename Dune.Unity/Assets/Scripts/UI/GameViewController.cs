@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+using Image = UnityEngine.UI.Image;
 
 public class GameViewController : MonoBehaviour
 {
@@ -10,14 +12,17 @@ public class GameViewController : MonoBehaviour
     public Button btnConstruir;
     public Button btnTrasladar;
     public Button btnComprar;
+    public Button btnMover;
     public Button btnDescartar;
 
     [Header("Panel Construir")]
     public GameObject panelConstruir;
-    public Button[] botonesCodigo;       // uno por cada instalación (8 botones)
+    public Button[] botonesCodigo;
     public TextMeshProUGUI textoCosteSeleccionado;
     public Button btnConfirmarConstruir;
     public Button btnCerrarConstruir;
+    public Button btnEnclaveAclimConstruir;
+    public Button btnEnclaveExhibConstruir;
 
     [Header("Panel Comprar Suministros")]
     public GameObject panelComprar;
@@ -25,38 +30,61 @@ public class GameViewController : MonoBehaviour
     public TextMeshProUGUI textoCosteCompra;
     public Button btnConfirmarCompra;
     public Button btnCerrarCompra;
+    public Button btnEnclaveAclimComprar;
+    public Button btnEnclaveExhibComprar;
+
+    [Header("Panel Mover Suministros")]
+    public GameObject panelMover;
+    public TMP_InputField inputCantidadMover;
+    public TextMeshProUGUI textoDestinoMover;
+    public Button btnConfirmarMover;
+    public Button btnCerrarMover;
 
     [Header("Feedback")]
     public TextMeshProUGUI textoFeedback;
 
-    // Códigos de instalación disponibles (del backend-api-reference.md)
     private readonly string[] codigos =
         { "ADR05", "ADP03", "AAV02", "ASU04", "EDR02", "EDP03", "EAV02", "ESU03" };
-
     private readonly int[] costes =
         { 1000, 2500, 5000, 3500, 21000, 12500, 15000, 25000 };
 
     private string codigoSeleccionado = "";
     private string enclaveIdSeleccionado = "";
+    private string instalacionIdMover = "";
+    private Coroutine feedbackCoroutine;
+
+    private readonly Color colorActivo = new Color(0.32f, 0.53f, 1f);
+    private readonly Color colorNormal = new Color(0.24f, 0.24f, 0.36f);
+
+    // ─────────────────────────────────────────────────────────────────────
+    // LIFECYCLE
+    // ─────────────────────────────────────────────────────────────────────
 
     void Start()
     {
         if (panelConstruir != null) panelConstruir.SetActive(false);
         if (panelComprar != null) panelComprar.SetActive(false);
+        if (panelMover != null) panelMover.SetActive(false);
         if (textoFeedback != null) textoFeedback.text = "";
 
         GameManager.OnError += MostrarError;
         GameManager.OnEstadoActualizado += OnEstadoActualizado;
 
-        // Conectar botones de código de instalación
         for (int i = 0; i < botonesCodigo.Length && i < codigos.Length; i++)
         {
             int idx = i;
             botonesCodigo[i]?.onClick.AddListener(() => SeleccionarCodigo(idx));
         }
 
-        // Input de compra → actualizar coste en tiempo real
         inputCantidadComprar?.onValueChanged.AddListener(ActualizarCosteCompra);
+
+        // Conectar botones de enclave del panel Comprar por código
+        btnEnclaveAclimComprar?.onClick.AddListener(OnEnclaveAclimClick);
+        btnEnclaveExhibComprar?.onClick.AddListener(OnEnclaveExhibClick);
+
+        // Conectar botones de enclave del panel Construir por código
+        btnEnclaveAclimConstruir?.onClick.AddListener(OnEnclaveAclimClick);
+        btnEnclaveExhibConstruir?.onClick.AddListener(OnEnclaveExhibClick);
     }
 
     void OnDestroy()
@@ -65,7 +93,9 @@ public class GameViewController : MonoBehaviour
         GameManager.OnEstadoActualizado -= OnEstadoActualizado;
     }
 
-    // ── Botones principales ───────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // BOTONES PRINCIPALES
+    // ─────────────────────────────────────────────────────────────────────
 
     public void OnSimularMesClick()
     {
@@ -76,7 +106,7 @@ public class GameViewController : MonoBehaviour
 
     public void OnGuardarClick()
     {
-        MostrarFeedback("Guardando...");
+        MostrarFeedback("Guardando partida...");
         GameManager.Instance.GuardarPartida();
         MostrarFeedback("Partida guardada.");
     }
@@ -87,16 +117,7 @@ public class GameViewController : MonoBehaviour
         codigoSeleccionado = "";
         if (textoCosteSeleccionado != null) textoCosteSeleccionado.text = "Selecciona un tipo";
         if (btnConfirmarConstruir != null) btnConfirmarConstruir.interactable = false;
-
-        // Por defecto usar el enclave de aclimatación
-        var partida = GameManager.Instance.PartidaActual;
-        if (partida?.Enclaves != null)
-        {
-            foreach (var e in partida.Enclaves)
-            {
-                if (e.TipoEnclave == 0) { enclaveIdSeleccionado = e.Id; break; }
-            }
-        }
+        SeleccionarEnclave(true);
     }
 
     public void OnComprarClick()
@@ -104,42 +125,86 @@ public class GameViewController : MonoBehaviour
         if (panelComprar != null) panelComprar.SetActive(true);
         if (inputCantidadComprar != null) inputCantidadComprar.text = "";
         if (textoCosteCompra != null) textoCosteCompra.text = "Coste: 0 S";
-
-        // Por defecto enclave de aclimatación
-        var partida = GameManager.Instance.PartidaActual;
-        if (partida?.Enclaves != null)
-        {
-            foreach (var e in partida.Enclaves)
-            {
-                if (e.TipoEnclave == 0) { enclaveIdSeleccionado = e.Id; break; }
-            }
-        }
+        SeleccionarEnclave(true);
     }
 
-    public void OnDescartarClick()
+    public void OnMoverClick()
     {
-        // Descartar la criatura seleccionada en DetailPanel
-        var criatura = UIManager.Instance?.detailPanel?.CriaturaSeleccionada;
-        if (criatura == null) { MostrarError("Selecciona una criatura primero."); return; }
-
-        MostrarFeedback($"Descartando {criatura.Nombre}... (coste: 20.000 S)");
-        GameManager.Instance.DescartarCriatura(criatura.Id);
+        var inst = UIManager.Instance?.detailPanel?.InstalacionSeleccionada;
+        if (inst == null)
+        {
+            MostrarFeedback("Selecciona una instalación primero.");
+            return;
+        }
+        instalacionIdMover = inst.Id;
+        if (textoDestinoMover != null)
+            textoDestinoMover.text = $"Destino: {inst.Codigo} (máx. {inst.CosteConstruccion} S)";
+        if (inputCantidadMover != null) inputCantidadMover.text = "";
+        if (panelMover != null) panelMover.SetActive(true);
+        SeleccionarEnclave(true);
     }
 
     public void OnTrasladarClick()
     {
         var criatura = UIManager.Instance?.detailPanel?.CriaturaSeleccionada;
-        if (criatura == null) { MostrarError("Selecciona una criatura primero."); return; }
-        if (!criatura.PuedeTraslado)
+        if (criatura == null)
         {
-            MostrarError("La criatura necesita salud ≥ 75 y ser adulta para trasladarse.");
+            MostrarFeedback("Selecciona una criatura primero.");
             return;
         }
-        MostrarFeedback("Selecciona la instalacion de exhibicion destino en el panel izquierdo.");
+        if (!criatura.PuedeTraslado)
+        {
+            MostrarFeedback("Necesita salud >= 75 y ser adulta para trasladarse.");
+            return;
+        }
+        MostrarFeedback("Haz click en la instalacion de EXHIBICION destino.");
         UIManager.Instance?.enclavePanel?.ActivarModoSeleccionDestino(criatura);
     }
 
-    // ── Panel Construir ───────────────────────────────────────────────────
+    public void OnDescartarClick()
+    {
+        var criatura = UIManager.Instance?.detailPanel?.CriaturaSeleccionada;
+        if (criatura == null)
+        {
+            MostrarFeedback("Selecciona una criatura primero.");
+            return;
+        }
+        MostrarFeedback($"Descartando {criatura.Nombre}... (coste: 20.000 S)");
+        GameManager.Instance.DescartarCriatura(criatura.Id);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // SELECTOR DE ENCLAVE
+    // ─────────────────────────────────────────────────────────────────────
+
+    public void OnEnclaveAclimClick() => SeleccionarEnclave(true);
+    public void OnEnclaveExhibClick() => SeleccionarEnclave(false);
+
+    private void SeleccionarEnclave(bool aclimatacion)
+    {
+        var partida = GameManager.Instance?.PartidaActual;
+        if (partida?.Enclaves == null) return;
+
+        foreach (var e in partida.Enclaves)
+        {
+            bool esAclim = e.TipoEnclave == 0;
+            if ((aclimatacion && esAclim) || (!aclimatacion && !esAclim))
+            {
+                enclaveIdSeleccionado = e.Id;
+                break;
+            }
+        }
+
+        // Actualizar color en ambos paneles
+        SetColorBtn(btnEnclaveAclimConstruir, aclimatacion ? colorActivo : colorNormal);
+        SetColorBtn(btnEnclaveExhibConstruir, !aclimatacion ? colorActivo : colorNormal);
+        SetColorBtn(btnEnclaveAclimComprar, aclimatacion ? colorActivo : colorNormal);
+        SetColorBtn(btnEnclaveExhibComprar, !aclimatacion ? colorActivo : colorNormal);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // PANEL CONSTRUIR
+    // ─────────────────────────────────────────────────────────────────────
 
     private void SeleccionarCodigo(int idx)
     {
@@ -156,14 +221,15 @@ public class GameViewController : MonoBehaviour
             string.IsNullOrEmpty(enclaveIdSeleccionado)) return;
 
         MostrarFeedback($"Construyendo {codigoSeleccionado}...");
-        panelConstruir.SetActive(false);
+        panelConstruir?.SetActive(false);
         GameManager.Instance.ConstruirInstalacion(codigoSeleccionado, enclaveIdSeleccionado);
     }
 
-    public void OnCerrarConstruirClick() =>
-        panelConstruir?.SetActive(false);
+    public void OnCerrarConstruirClick() => panelConstruir?.SetActive(false);
 
-    // ── Panel Comprar ─────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // PANEL COMPRAR
+    // ─────────────────────────────────────────────────────────────────────
 
     private void ActualizarCosteCompra(string valor)
     {
@@ -175,17 +241,39 @@ public class GameViewController : MonoBehaviour
     {
         if (!int.TryParse(inputCantidadComprar?.text, out int cantidad) || cantidad <= 0)
         {
-            MostrarError("Introduce una cantidad valida."); return;
+            MostrarFeedback("Introduce una cantidad valida."); return;
         }
         panelComprar?.SetActive(false);
         MostrarFeedback($"Comprando {cantidad} suministros...");
         GameManager.Instance.ComprarSuministros(enclaveIdSeleccionado, cantidad);
     }
 
-    public void OnCerrarCompraClick() =>
-        panelComprar?.SetActive(false);
+    public void OnCerrarCompraClick() => panelComprar?.SetActive(false);
 
-    // ── Callbacks ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // PANEL MOVER
+    // ─────────────────────────────────────────────────────────────────────
+
+    public void OnConfirmarMoverClick()
+    {
+        if (!int.TryParse(inputCantidadMover?.text, out int cantidad) || cantidad <= 0)
+        {
+            MostrarFeedback("Introduce una cantidad valida."); return;
+        }
+        if (string.IsNullOrEmpty(instalacionIdMover))
+        {
+            MostrarFeedback("No hay instalacion destino seleccionada."); return;
+        }
+        panelMover?.SetActive(false);
+        MostrarFeedback($"Moviendo {cantidad} suministros...");
+        GameManager.Instance.MoverSuministros(enclaveIdSeleccionado, instalacionIdMover, cantidad);
+    }
+
+    public void OnCerrarMoverClick() => panelMover?.SetActive(false);
+
+    // ─────────────────────────────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────────────────────────────
 
     private void OnEstadoActualizado(PartidaData partida)
     {
@@ -199,16 +287,34 @@ public class GameViewController : MonoBehaviour
         if (btnGuardar != null) btnGuardar.interactable = activo;
         if (btnConstruir != null) btnConstruir.interactable = activo;
         if (btnComprar != null) btnComprar.interactable = activo;
+        if (btnMover != null) btnMover.interactable = activo;
     }
 
     private void MostrarFeedback(string msg)
     {
-        if (textoFeedback != null) textoFeedback.text = msg;
+        if (textoFeedback == null) return;
+        textoFeedback.text = msg;
+        if (feedbackCoroutine != null) StopCoroutine(feedbackCoroutine);
+        if (!string.IsNullOrEmpty(msg))
+            feedbackCoroutine = StartCoroutine(LimpiarFeedbackTras(3f));
+    }
+
+    private IEnumerator LimpiarFeedbackTras(float segundos)
+    {
+        yield return new WaitForSeconds(segundos);
+        if (textoFeedback != null) textoFeedback.text = "";
     }
 
     private void MostrarError(string msg)
     {
         SetBotonesInteractivos(true);
-        if (textoFeedback != null) textoFeedback.text = $"[ERROR] {msg}";
+        MostrarFeedback($"[ERROR] {msg}");
+    }
+
+    private void SetColorBtn(Button btn, Color color)
+    {
+        if (btn == null) return;
+        var img = btn.GetComponent<Image>();
+        if (img != null) img.color = color;
     }
 }
