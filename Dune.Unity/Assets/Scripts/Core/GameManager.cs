@@ -43,7 +43,11 @@ public class GameManager : MonoBehaviour
 
     private PartidaData ParsePartida(string json)
     {
-        return JsonConvert.DeserializeObject<PartidaData>(json);
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+        {
+            MetadataPropertyHandling = Newtonsoft.Json.MetadataPropertyHandling.Ignore
+        };
+        return Newtonsoft.Json.JsonConvert.DeserializeObject<PartidaData>(json, settings);
     }
     private void HandleSuccess(string json)
     {
