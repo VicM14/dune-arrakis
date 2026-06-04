@@ -40,6 +40,9 @@ public class GameViewController : MonoBehaviour
     public Button btnConfirmarMover;
     public Button btnCerrarMover;
 
+    [Header("Transicion de mes")]
+    public MonthTransitionUI monthTransition;
+
     [Header("Feedback")]
     public TextMeshProUGUI textoFeedback;
 
@@ -100,8 +103,32 @@ public class GameViewController : MonoBehaviour
     public void OnSimularMesClick()
     {
         SetBotonesInteractivos(false);
-        MostrarFeedback("Simulando mes...");
+
+        int mesActual = GameManager.Instance?.PartidaActual?.MesActual ?? 0;
+
+        if (monthTransition != null)
+            StartCoroutine(SimularConTransicion(mesActual + 1));
+        else
+        {
+            MostrarFeedback("Simulando mes...");
+            GameManager.Instance.EjecutarRonda();
+        }
+    }
+
+    private IEnumerator SimularConTransicion(int mesNuevo)
+    {
+        // Suscribirse temporalmente para notificar cuando la API responda
+        void OnApiResponse(PartidaData _) => monthTransition?.NotificarApiCompleta();
+        GameManager.OnEstadoActualizado += OnApiResponse;
+
+        // Lanzar la API
         GameManager.Instance.EjecutarRonda();
+
+        // Ejecutar la animación (espera internamente a que la API responda)
+        yield return monthTransition.Ejecutar(mesNuevo);
+
+        GameManager.OnEstadoActualizado -= OnApiResponse;
+        SetBotonesInteractivos(true);
     }
 
     public void OnGuardarClick()
