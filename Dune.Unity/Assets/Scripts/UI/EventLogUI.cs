@@ -45,8 +45,8 @@ public class EventLogUI : MonoBehaviour
 
     private void ScrollAlFinal()
     {
-        if (scrollRect != null)
-            Canvas.ForceUpdateCanvases();
+        if (scrollRect == null) return;
+        Canvas.ForceUpdateCanvases();
         scrollRect.verticalNormalizedPosition = 0f;
     }
 }
