@@ -1,0 +1,77 @@
+{
+  "IdPartida": "5945cef8-fd85-4ff8-a179-23dada4c7a57",
+  "NombreJugador": "vic",
+  "MesActual": 1,
+  "Solaris": 93000,
+  "Enclaves": [
+    {
+      "Id": "13440983-a293-4561-9874-9651801cfbc1",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 100,
+      "Instalaciones": [
+        {
+          "Id": "397824b0-28f7-4aec-8a87-013e7a1230c7",
+          "Codigo": "ASU04",
+          "Nombre": "Pozo Reforzado (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 4,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 25,
+          "CosteConstruccion": 3500,
+          "Medio": 2,
+          "Alimentacion": 1,
+          "TipoRecinto": 3,
+          "Suministros": 100,
+          "SuministrosIniciales": 100
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "0cf0e44f-97d9-47bc-a8e6-82db497a8f96",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 1000,
+      "Instalaciones": [
+        {
+          "Id": "16a7febe-b1ee-4d92-8547-5284c5ff038c",
+          "Codigo": "ASU04",
+          "Nombre": "Pozo Reforzado (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 4,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 25,
+          "CosteConstruccion": 3500,
+          "Medio": 2,
+          "Alimentacion": 1,
+          "TipoRecinto": 3,
+          "Suministros": 100,
+          "SuministrosIniciales": 100
+        }
+      ],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: vic.",
+    "Construida Pozo Reforzado (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 3500 Solaris. Suministros iniciales: 100.",
+    "Construida Pozo Reforzado (Aclimataci\u00F3n) en Arrakeen. Coste: 3500 Solaris. Suministros iniciales: 100."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T01:29:11.2604202Z"
+}

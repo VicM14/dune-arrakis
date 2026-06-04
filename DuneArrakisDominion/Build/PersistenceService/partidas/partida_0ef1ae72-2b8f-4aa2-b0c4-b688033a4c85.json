@@ -1,0 +1,61 @@
+{
+  "IdPartida": "0ef1ae72-2b8f-4aa2-b0c4-b688033a4c85",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 2,
+  "Solaris": 35000,
+  "Enclaves": [
+    {
+      "Id": "a381ec92-7b29-4d05-8e96-a6b575ad37f1",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "fce2fa29-32fa-497e-8bc0-7e317b7b39cc",
+          "Codigo": "EAV02",
+          "Nombre": "C\u00FApula Blindada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 15000,
+          "Medio": 1,
+          "Alimentacion": 1,
+          "TipoRecinto": 2,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "5dcfa0bf-dd6b-40e8-b06c-d8343a20e438",
+      "Nombre": "Giedi Prime",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 100,
+      "VisitantesMensualesBase": 2000,
+      "NivelAdquisitivo": 0,
+      "Suministros": 5000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Giedi Prime: Galer\u00EDa Industrial. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "Construida C\u00FApula Blindada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 15000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Giedi Prime: Galer\u00EDa Industrial",
+    "SolarisIniciales": 50000,
+    "EnclaveExhibicionNombre": "Giedi Prime"
+  },
+  "FechaModificacion": "2026-06-04T17:10:45.382328Z"
+}

@@ -1,0 +1,43 @@
+{
+  "IdPartida": "14f011cc-981f-4784-a5a9-1c683ff14917",
+  "NombreJugador": "Tu alias de Casa...",
+  "MesActual": 2,
+  "Solaris": 100000,
+  "Enclaves": [
+    {
+      "Id": "fcfaa521-ce2b-4dbb-b7d5-f4d00e666dbd",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "564af952-9127-4233-88d1-957bf5432776",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Tu alias de Casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T11:15:54.023487Z"
+}

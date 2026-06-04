@@ -9,11 +9,11 @@ using UnityEngine.Networking;
 /// métodos de llamada al SimulationService (localhost:5000).
 /// NUNCA llama directamente al PersistenceService (5032).
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour 
 {
     public static GameManager Instance { get; private set; }
 
-    private const string SimUrl = "http://localhost:5000";
+    private const string SimUrl = "http://localhost:5000"; 
 
     public PartidaData PartidaActual { get; private set; }
 
@@ -147,7 +147,11 @@ public class GameManager : MonoBehaviour
         else
             HandleError("ComprarSuministros", req.downloadHandler.text);
     }
-
+    void OnApplicationQuit()
+    {
+        if (PartidaActual != null)
+            StartCoroutine(GuardarPartidaCoroutine());
+    }
     /// POST /simulacion/mover-suministros
     public void MoverSuministros(string enclaveId, string instalacionId, int cantidad) =>
         StartCoroutine(MoverSuministrosCoroutine(enclaveId, instalacionId, cantidad));

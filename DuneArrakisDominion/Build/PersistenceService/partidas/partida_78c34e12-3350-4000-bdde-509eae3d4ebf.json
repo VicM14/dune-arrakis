@@ -1,0 +1,82 @@
+{
+  "IdPartida": "78c34e12-3350-4000-bdde-509eae3d4ebf",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 4,
+  "Solaris": 35000,
+  "Enclaves": [
+    {
+      "Id": "caa29f14-275b-4f66-a111-35b8cee399bb",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "e64a3880-1006-4a3a-a1bf-143972795b49",
+          "Codigo": "ADP03",
+          "Nombre": "Escudo Est\u00E1tico (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 50,
+          "CosteConstruccion": 2500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 300,
+          "SuministrosIniciales": 300
+        },
+        {
+          "Id": "0974205a-2653-4500-b714-85123a5c5f8e",
+          "Codigo": "EDP03",
+          "Nombre": "Escudo Est\u00E1tico (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 300,
+          "CosteConstruccion": 12500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "55693866-c271-47cd-b9f1-56d2512dec72",
+      "Nombre": "Giedi Prime",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 100,
+      "VisitantesMensualesBase": 2000,
+      "NivelAdquisitivo": 0,
+      "Suministros": 5000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Giedi Prime: Galer\u00EDa Industrial. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "Construida Escudo Est\u00E1tico (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 2500 Solaris. Suministros iniciales: 300.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "Construida Escudo Est\u00E1tico (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 12500 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Giedi Prime: Galer\u00EDa Industrial",
+    "SolarisIniciales": 50000,
+    "EnclaveExhibicionNombre": "Giedi Prime"
+  },
+  "FechaModificacion": "2026-06-04T17:03:18.0058526Z"
+}

@@ -1,0 +1,120 @@
+{
+  "IdPartida": "8cc6b1d6-bf85-4ddc-808c-aa9bacb7fa1a",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 7,
+  "Solaris": 54500,
+  "Enclaves": [
+    {
+      "Id": "a5d73a0a-3363-4324-83e9-0bec0cea7d34",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "9a713689-86f6-4ac6-bab5-58f7d0c65f67",
+          "Codigo": "EDR02",
+          "Nombre": "Roca Sellada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 21000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        },
+        {
+          "Id": "5aeefec6-e00b-4245-a03e-36ec991ba9b3",
+          "Codigo": "EDR02",
+          "Nombre": "Roca Sellada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 21000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        },
+        {
+          "Id": "42de6f28-f065-4502-8546-912b4aa89357",
+          "Codigo": "ASU04",
+          "Nombre": "Pozo Reforzado (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 4,
+          "Criaturas": [
+            {
+              "$type": "GusanoDeArena",
+              "Id": "91de93db-51b0-4292-a851-37c782ab0ca3",
+              "Nombre": "Gusano de Arena Joven",
+              "Salud": 100,
+              "EdadActual": 1,
+              "EdadAdulta": 24,
+              "ApetitoBase": 5,
+              "Dieta": 1,
+              "Habitat": 2,
+              "EnLetargo": false,
+              "VecesFavorita": 0
+            }
+          ],
+          "VisitantesActuales": [],
+          "Hectareas": 25,
+          "CosteConstruccion": 3500,
+          "Medio": 2,
+          "Alimentacion": 1,
+          "TipoRecinto": 3,
+          "Suministros": 100,
+          "SuministrosIniciales": 100
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "c5c2bb1b-4af7-49ec-a7cc-c4f74667a236",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 21000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 21000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 5 ---",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones.",
+    "Construida Pozo Reforzado (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 3500 Solaris. Suministros iniciales: 100.",
+    "--- INICIO MES 6 ---",
+    "Nueva criatura generada en Pozo Reforzado (Aclimataci\u00F3n): Gusano de Arena Joven",
+    "Finanzas mes 6: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 7 ---",
+    "Finanzas mes 7: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T17:22:28.4143136Z"
+}

@@ -1,0 +1,43 @@
+{
+  "IdPartida": "fe1e5f5b-19d4-4898-ba1e-c1274e361e41",
+  "NombreJugador": "Paul Atreides",
+  "MesActual": 2,
+  "Solaris": 100000,
+  "Enclaves": [
+    {
+      "Id": "8eece4e4-597b-41ae-a5ce-10dd6babafe2",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "81b5983a-c73b-46ab-81e6-32dc9622d260",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Paul Atreides.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-03T19:53:20.9387533Z"
+}

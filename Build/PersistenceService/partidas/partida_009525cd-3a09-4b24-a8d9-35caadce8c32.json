@@ -1,0 +1,86 @@
+{
+  "IdPartida": "009525cd-3a09-4b24-a8d9-35caadce8c32",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 6,
+  "Solaris": 16500,
+  "Enclaves": [
+    {
+      "Id": "7dfc0a00-fe89-483f-89bf-266a365fe68d",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "2fa2797d-cdd4-454c-8a82-f5e14caefa42",
+          "Codigo": "EDR02",
+          "Nombre": "Roca Sellada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 21000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        },
+        {
+          "Id": "6c12d80b-c95e-4b7f-9dc5-8f3054e67d1b",
+          "Codigo": "EDP03",
+          "Nombre": "Escudo Est\u00E1tico (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 300,
+          "CosteConstruccion": 12500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "e365cbbc-9608-4aee-a8d7-6827547f3511",
+      "Nombre": "Giedi Prime",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 100,
+      "VisitantesMensualesBase": 2000,
+      "NivelAdquisitivo": 0,
+      "Suministros": 5000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Giedi Prime: Galer\u00EDa Industrial. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 21000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 5 ---",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones.",
+    "Construida Escudo Est\u00E1tico (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 12500 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 6 ---",
+    "Finanzas mes 6: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Giedi Prime: Galer\u00EDa Industrial",
+    "SolarisIniciales": 50000,
+    "EnclaveExhibicionNombre": "Giedi Prime"
+  },
+  "FechaModificacion": "2026-06-04T17:09:52.5575873Z"
+}

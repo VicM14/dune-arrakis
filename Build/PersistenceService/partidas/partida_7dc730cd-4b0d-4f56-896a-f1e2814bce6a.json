@@ -1,0 +1,41 @@
+{
+  "IdPartida": "7dc730cd-4b0d-4f56-896a-f1e2814bce6a",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 1,
+  "Solaris": 50000,
+  "Enclaves": [
+    {
+      "Id": "a09ebfd9-1925-44e4-b6f9-dca6e5b61d10",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 100,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "db045674-7e90-49f0-957c-87034a807774",
+      "Nombre": "Giedi Prime",
+      "Nivel": 1,
+      "PoblacionVisitantes": 2000,
+      "Instalaciones": [],
+      "Hectareas": 100,
+      "VisitantesMensualesBase": 2000,
+      "NivelAdquisitivo": 0,
+      "Suministros": 5000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Giedi Prime: Galer\u00EDa Industrial. Jugador: Escribe aqu\u00ED tu alias de casa...."
+  ],
+  "Escenario": {
+    "Nombre": "Giedi Prime: Galer\u00EDa Industrial",
+    "SolarisIniciales": 50000,
+    "EnclaveExhibicionNombre": "Giedi Prime"
+  },
+  "FechaModificacion": "2026-06-04T20:59:31.5989963Z"
+}

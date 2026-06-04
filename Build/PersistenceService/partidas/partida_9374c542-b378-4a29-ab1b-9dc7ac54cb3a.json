@@ -1,0 +1,41 @@
+{
+  "IdPartida": "9374c542-b378-4a29-ab1b-9dc7ac54cb3a",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 1,
+  "Solaris": 150000,
+  "Enclaves": [
+    {
+      "Id": "225f2d09-0951-442d-a6a6-6794a68752ef",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 100,
+      "Instalaciones": [],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "1038be47-5c18-4add-bbee-51da266f86df",
+      "Nombre": "Caladan",
+      "Nivel": 1,
+      "PoblacionVisitantes": 3000,
+      "Instalaciones": [],
+      "Hectareas": 10000,
+      "VisitantesMensualesBase": 3000,
+      "NivelAdquisitivo": 1,
+      "Suministros": 25000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Caladan: Reserva Ducal. Jugador: Escribe aqu\u00ED tu alias de casa...."
+  ],
+  "Escenario": {
+    "Nombre": "Caladan: Reserva Ducal",
+    "SolarisIniciales": 150000,
+    "EnclaveExhibicionNombre": "Caladan"
+  },
+  "FechaModificacion": "2026-06-04T16:28:55.1125636Z"
+}

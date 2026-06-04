@@ -1,0 +1,61 @@
+{
+  "IdPartida": "eed5457b-877b-4ff5-bf8e-9cc96d6b5f3e",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 2,
+  "Solaris": 96500,
+  "Enclaves": [
+    {
+      "Id": "8181e6ec-6924-4f6a-9505-29cc663f95f7",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "2e300424-cc4b-4c46-82c8-5d7ce2819ec6",
+          "Codigo": "ASU04",
+          "Nombre": "Pozo Reforzado (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 4,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 25,
+          "CosteConstruccion": 3500,
+          "Medio": 2,
+          "Alimentacion": 1,
+          "TipoRecinto": 3,
+          "Suministros": 100,
+          "SuministrosIniciales": 100
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "331abcdb-b838-4f85-81dd-b5927b817172",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "Construida Pozo Reforzado (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 3500 Solaris. Suministros iniciales: 100."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T15:07:35.7658282Z"
+}

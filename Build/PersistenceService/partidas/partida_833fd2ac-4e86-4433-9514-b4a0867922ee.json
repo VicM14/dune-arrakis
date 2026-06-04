@@ -1,0 +1,101 @@
+{
+  "IdPartida": "833fd2ac-4e86-4433-9514-b4a0867922ee",
+  "NombreJugador": "Vic",
+  "MesActual": 5,
+  "Solaris": 84000,
+  "Enclaves": [
+    {
+      "Id": "96b58a55-6373-485c-8aa6-9b9f7af65970",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "a0f7d621-8063-4df3-92d7-88c5f00200a1",
+          "Codigo": "ADR05",
+          "Nombre": "Roca Sellada (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 5,
+          "Criaturas": [
+            {
+              "$type": "MuadDib",
+              "Id": "1b85a200-e4d6-4966-b5a6-4939a15a9ac1",
+              "Nombre": "Muad\u0027Dib Joven",
+              "Salud": 100,
+              "EdadActual": 2,
+              "EdadAdulta": 12,
+              "ApetitoBase": 2,
+              "Dieta": 0,
+              "Habitat": 0,
+              "EnLetargo": false,
+              "VecesFavorita": 0
+            }
+          ],
+          "VisitantesActuales": [],
+          "Hectareas": 10,
+          "CosteConstruccion": 1000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 198,
+          "SuministrosIniciales": 200
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "3f6b1aab-bc2a-4bd5-95f8-e381888499a9",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "09770fc2-686c-48e6-aa0e-8b3edb664e36",
+          "Codigo": "EDP03",
+          "Nombre": "Escudo Est\u00E1tico (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 300,
+          "CosteConstruccion": 12500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10500,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Vic.",
+    "Construida Escudo Est\u00E1tico (Exhibici\u00F3n) en Arrakeen. Coste: 12500 Solaris. Suministros iniciales: 0.",
+    "Construida Roca Sellada (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 1000 Solaris. Suministros iniciales: 200.",
+    "Compra de 500 unidades de suministro para Arrakeen. Coste: 2500 Solaris.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Nueva criatura generada en Roca Sellada (Aclimataci\u00F3n): Muad\u0027Dib Joven",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 5 ---",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T17:54:50.0383986Z"
+}

@@ -1,0 +1,67 @@
+{
+  "IdPartida": "b45b679b-3410-4e7b-8a6f-fbf201234e27",
+  "NombreJugador": "Tu alias de Casa...",
+  "MesActual": 5,
+  "Solaris": 99000,
+  "Enclaves": [
+    {
+      "Id": "3f35caba-0a73-4dd8-99dc-ef40ad3756c5",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "26ca2a9d-0d35-4b46-8740-37e13c7b3a0d",
+          "Codigo": "ADR05",
+          "Nombre": "Roca Sellada (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 5,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 10,
+          "CosteConstruccion": 1000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 200,
+          "SuministrosIniciales": 200
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "b3cf2b80-b8d3-4400-8790-e3b63b5ef5f8",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Tu alias de Casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 1000 Solaris. Suministros iniciales: 200.",
+    "--- INICIO MES 5 ---",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T10:52:07.2478296Z"
+}
