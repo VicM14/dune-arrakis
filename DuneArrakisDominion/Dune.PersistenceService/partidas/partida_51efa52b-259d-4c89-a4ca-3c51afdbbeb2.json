@@ -1,0 +1,133 @@
+{
+  "IdPartida": "51efa52b-259d-4c89-a4ca-3c51afdbbeb2",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 5,
+  "Solaris": 19000,
+  "Enclaves": [
+    {
+      "Id": "327e2b4a-3f6a-4491-9cac-2575bcb32775",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "94a535b4-5e46-413d-9eac-94f559d857b9",
+          "Codigo": "EAV02",
+          "Nombre": "C\u00FApula Blindada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 15000,
+          "Medio": 1,
+          "Alimentacion": 1,
+          "TipoRecinto": 2,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        },
+        {
+          "Id": "86b7525f-949e-433a-a9c8-dd27db0e30ed",
+          "Codigo": "ADP03",
+          "Nombre": "Escudo Est\u00E1tico (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 3,
+          "Criaturas": [
+            {
+              "$type": "TigraLaza",
+              "Id": "805f4e07-26da-428e-89fb-d80d63437f76",
+              "Nombre": "Tigre Laza Joven",
+              "Salud": 100,
+              "EdadActual": 0,
+              "EdadAdulta": 38,
+              "ApetitoBase": 8,
+              "Dieta": 1,
+              "Habitat": 0,
+              "EnLetargo": false,
+              "VecesFavorita": 0
+            }
+          ],
+          "VisitantesActuales": [],
+          "Hectareas": 50,
+          "CosteConstruccion": 2500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 300,
+          "SuministrosIniciales": 300
+        },
+        {
+          "Id": "1e614832-9a0a-416f-a471-b0250fab8ef7",
+          "Codigo": "EDP03",
+          "Nombre": "Escudo Est\u00E1tico (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 300,
+          "CosteConstruccion": 12500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        },
+        {
+          "Id": "e140b6b0-e975-4931-aef9-29df441db25e",
+          "Codigo": "ADR05",
+          "Nombre": "Roca Sellada (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 5,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 10,
+          "CosteConstruccion": 1000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 200,
+          "SuministrosIniciales": 200
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "8032c2b8-d533-4eaa-9383-d50b0e71c0cf",
+      "Nombre": "Giedi Prime",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 100,
+      "VisitantesMensualesBase": 2000,
+      "NivelAdquisitivo": 0,
+      "Suministros": 5000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Giedi Prime: Galer\u00EDa Industrial. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "Construida C\u00FApula Blindada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 15000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "Construida Escudo Est\u00E1tico (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 2500 Solaris. Suministros iniciales: 300.",
+    "Construida Escudo Est\u00E1tico (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 12500 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 5 ---",
+    "Nueva criatura generada en Escudo Est\u00E1tico (Aclimataci\u00F3n): Tigre Laza Joven",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 1000 Solaris. Suministros iniciales: 200."
+  ],
+  "Escenario": {
+    "Nombre": "Giedi Prime: Galer\u00EDa Industrial",
+    "SolarisIniciales": 50000,
+    "EnclaveExhibicionNombre": "Giedi Prime"
+  },
+  "FechaModificacion": "2026-06-04T16:53:33.2178077Z"
+}

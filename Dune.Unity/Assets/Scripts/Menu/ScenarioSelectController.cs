@@ -69,18 +69,21 @@ public class ScenarioSelectController : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("=== ScenarioSelectController Start ===");
+        Debug.Log($"btnArrakeen: {btnArrakeen}");
+        Debug.Log($"btnGiediPrime: {btnGiediPrime}");
+        Debug.Log($"btnCaladan: {btnCaladan}");
+
         if (textoError != null) textoError.text = "";
         if (btnIniciar != null) btnIniciar.interactable = false;
 
         GameManager.OnError += MostrarError;
         GameManager.OnEstadoActualizado += OnPartidaIniciada;
 
-        // Asignar listeners de los botones de escenario
-        btnArrakeen?.onClick.AddListener(() => SeleccionarEscenario(0));
-        btnGiediPrime?.onClick.AddListener(() => SeleccionarEscenario(1));
-        btnCaladan?.onClick.AddListener(() => SeleccionarEscenario(2));
+        btnArrakeen?.onClick.AddListener(() => { Debug.Log("Click Arrakeen"); SeleccionarEscenario(0); });
+        btnGiediPrime?.onClick.AddListener(() => { Debug.Log("Click GiediPrime"); SeleccionarEscenario(1); });
+        btnCaladan?.onClick.AddListener(() => { Debug.Log("Click Caladan"); SeleccionarEscenario(2); });
 
-        // Seleccionar Arrakeen por defecto
         SeleccionarEscenario(0);
     }
 

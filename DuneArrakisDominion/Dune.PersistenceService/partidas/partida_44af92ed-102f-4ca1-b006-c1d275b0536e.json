@@ -1,0 +1,86 @@
+{
+  "IdPartida": "44af92ed-102f-4ca1-b006-c1d275b0536e",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 6,
+  "Solaris": 76500,
+  "Enclaves": [
+    {
+      "Id": "9ee4f631-a355-40de-a079-f640fe43baef",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "b3014728-a133-48a1-94ba-7d2a4e36e749",
+          "Codigo": "ADP03",
+          "Nombre": "Escudo Est\u00E1tico (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 50,
+          "CosteConstruccion": 2500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 300,
+          "SuministrosIniciales": 300
+        },
+        {
+          "Id": "49b8b2c5-5d6c-40a4-b67b-2e5d7277dbcc",
+          "Codigo": "EDR02",
+          "Nombre": "Roca Sellada (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 200,
+          "CosteConstruccion": 21000,
+          "Medio": 0,
+          "Alimentacion": 0,
+          "TipoRecinto": 0,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "3b37e285-1b21-4b24-b6cb-1660c420ec19",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "--- INICIO MES 2 ---",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "Construida Escudo Est\u00E1tico (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 2500 Solaris. Suministros iniciales: 300.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "Construida Roca Sellada (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 21000 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 5 ---",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 6 ---",
+    "Finanzas mes 6: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T17:08:18.0872237Z"
+}

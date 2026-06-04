@@ -1,0 +1,131 @@
+{
+  "IdPartida": "39201dcc-2a71-4ecb-a721-39ec8e1072ca",
+  "NombreJugador": "Escribe aqu\u00ED tu alias de casa...",
+  "MesActual": 5,
+  "Solaris": 80000,
+  "Enclaves": [
+    {
+      "Id": "21697096-a9cf-40e3-9b34-c27f670b6ed6",
+      "Nombre": "Cuenca Experimental de Arrakis",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "484e806c-1014-4030-b140-052e402de917",
+          "Codigo": "ADP03",
+          "Nombre": "Escudo Est\u00E1tico (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 3,
+          "Criaturas": [
+            {
+              "$type": "TigraLaza",
+              "Id": "f04332ea-1ccc-4092-bb69-2a5060978f53",
+              "Nombre": "Tigre Laza Joven",
+              "Salud": 100,
+              "EdadActual": 3,
+              "EdadAdulta": 38,
+              "ApetitoBase": 8,
+              "Dieta": 1,
+              "Habitat": 0,
+              "EnLetargo": false,
+              "VecesFavorita": 0
+            },
+            {
+              "$type": "TigraLaza",
+              "Id": "f4a71538-6657-4351-83a2-a33dddc724cd",
+              "Nombre": "Tigre Laza Joven",
+              "Salud": 100,
+              "EdadActual": 0,
+              "EdadAdulta": 38,
+              "ApetitoBase": 8,
+              "Dieta": 1,
+              "Habitat": 0,
+              "EnLetargo": false,
+              "VecesFavorita": 0
+            }
+          ],
+          "VisitantesActuales": [],
+          "Hectareas": 50,
+          "CosteConstruccion": 2500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 276,
+          "SuministrosIniciales": 300
+        },
+        {
+          "Id": "ee99f820-739c-4e80-9714-062449dca095",
+          "Codigo": "EDP03",
+          "Nombre": "Escudo Est\u00E1tico (Exhibici\u00F3n)",
+          "Tipo": 1,
+          "CapacidadMaxima": 3,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 300,
+          "CosteConstruccion": 12500,
+          "Medio": 0,
+          "Alimentacion": 1,
+          "TipoRecinto": 1,
+          "Suministros": 0,
+          "SuministrosIniciales": 0
+        }
+      ],
+      "Hectareas": 5000,
+      "VisitantesMensualesBase": 0,
+      "NivelAdquisitivo": 1,
+      "Suministros": 20000,
+      "TipoEnclave": 0
+    },
+    {
+      "Id": "e2c1c163-3f2d-43b9-9ec8-5f862864d304",
+      "Nombre": "Arrakeen",
+      "Nivel": 1,
+      "PoblacionVisitantes": 0,
+      "Instalaciones": [
+        {
+          "Id": "cc763697-936f-448d-8241-fcb83a2d88c4",
+          "Codigo": "AAV02",
+          "Nombre": "C\u00FApula Blindada (Aclimataci\u00F3n)",
+          "Tipo": 0,
+          "CapacidadMaxima": 2,
+          "Criaturas": [],
+          "VisitantesActuales": [],
+          "Hectareas": 100,
+          "CosteConstruccion": 5000,
+          "Medio": 1,
+          "Alimentacion": 1,
+          "TipoRecinto": 2,
+          "Suministros": 500,
+          "SuministrosIniciales": 500
+        }
+      ],
+      "Hectareas": 7700,
+      "VisitantesMensualesBase": 1000,
+      "NivelAdquisitivo": 2,
+      "Suministros": 10000,
+      "TipoEnclave": 1
+    }
+  ],
+  "RegistroEventos": [
+    "Partida iniciada. Escenario: Arrakeen: Dominio de la Especia. Jugador: Escribe aqu\u00ED tu alias de casa....",
+    "Construida Escudo Est\u00E1tico (Aclimataci\u00F3n) en Cuenca Experimental de Arrakis. Coste: 2500 Solaris. Suministros iniciales: 300.",
+    "--- INICIO MES 2 ---",
+    "Nueva criatura generada en Escudo Est\u00E1tico (Aclimataci\u00F3n): Tigre Laza Joven",
+    "Finanzas mes 2: \u002B0,00 ingresos por donaciones.",
+    "--- INICIO MES 3 ---",
+    "Finanzas mes 3: \u002B0,00 ingresos por donaciones.",
+    "Construida Escudo Est\u00E1tico (Exhibici\u00F3n) en Cuenca Experimental de Arrakis. Coste: 12500 Solaris. Suministros iniciales: 0.",
+    "--- INICIO MES 4 ---",
+    "Finanzas mes 4: \u002B0,00 ingresos por donaciones.",
+    "Construida C\u00FApula Blindada (Aclimataci\u00F3n) en Arrakeen. Coste: 5000 Solaris. Suministros iniciales: 500.",
+    "--- INICIO MES 5 ---",
+    "Nueva criatura generada en Escudo Est\u00E1tico (Aclimataci\u00F3n): Tigre Laza Joven",
+    "Finanzas mes 5: \u002B0,00 ingresos por donaciones."
+  ],
+  "Escenario": {
+    "Nombre": "Arrakeen: Dominio de la Especia",
+    "SolarisIniciales": 100000,
+    "EnclaveExhibicionNombre": "Arrakeen"
+  },
+  "FechaModificacion": "2026-06-04T17:00:44.9580752Z"
+}

@@ -21,20 +21,22 @@ public class EventLogUI : MonoBehaviour
         ScrollAlFinal();
     }
 
+    private void CrearEntrada(string texto)
+    {
+        if (prefabEntrada == null || contenedor == null) return;
+        var go = Instantiate(prefabEntrada, contenedor);
+        var tmp = go.GetComponent<TextMeshProUGUI>();
+        if (tmp == null) tmp = go.GetComponentInChildren<TextMeshProUGUI>();
+        if (tmp != null) tmp.text = texto;
+        entradasActuales.Add(go);
+    }
+
     public void AgregarEntrada(string texto)
     {
         CrearEntrada(texto);
         ScrollAlFinal();
     }
 
-    private void CrearEntrada(string texto)
-    {
-        if (prefabEntrada == null || contenedor == null) return;
-        var go = Instantiate(prefabEntrada, contenedor);
-        var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
-        if (tmp != null) tmp.text = texto;
-        entradasActuales.Add(go);
-    }
 
     private void LimpiarLog()
     {
